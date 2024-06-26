@@ -1,0 +1,50 @@
+<div class="card">
+  <h2>Registrar</h2>
+  <form class="form" [formGroup]="registerData" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="login">Login:</label>
+
+      <input class="login" type="text" id="login" name="login" formControlName="login"
+        [class.ng-invalid]="isLoginInvalid()" required>
+
+      <div *ngIf="isLoginInvalid()">
+
+        <span *ngIf="registerData.get('login')?.hasError('required') && isSubmitted">
+          Esse campo não pode estar vazio
+        </span>
+
+        <span *ngIf="registerData.get('login')?.hasError('minlength') && isSubmitted">
+          Login precisa ter mais do que 3 letras.
+        </span>
+
+        <span *ngIf="registerData.get('login')?.hasError('maxlength') && isSubmitted">
+          Login não pode ter mais do que 30 letras.
+        </span>
+      </div>
+    </div>
+    <div class="form-group">
+
+      <label for="password">Senha:</label>
+
+      <input class="password" type="password" id="password" name="password" formControlName="password"
+        [class.ng-invalid]="isPasswordInvalid()" required>
+
+      <div *ngIf="isPasswordInvalid()">
+
+        <span *ngIf="registerData.get('password')?.hasError('required') && isSubmitted">
+          Esse campo não pode estar vazio
+        </span>
+
+        <span *ngIf="registerData.get('password')?.hasError('minlength')">
+          Senha precisa ter mais do que 5 letras
+        </span>
+
+        <span *ngIf="registerData.get('password')?.hasError('maxlength')">
+          Senha não pode ter mais do que 40 letras
+        </span>
+      </div>
+
+    </div>
+    <button type="submit">Registrar</button>
+  </form>
+</div>

@@ -22,7 +22,7 @@ export class RegisterComponent {
     this.isSubmitted = true;
     if (this.registerData.valid) {
       console.log(this.registerData.value)
-      this.router.navigateByUrl('');
+      this.router.navigateByUrl('login');
     }
   }
 

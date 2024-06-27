@@ -1,1 +1,26 @@
-<p>login works!</p>
+<div class="card">
+  <h2>Entrar</h2>
+  <form class="form" [formGroup]="loginData" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="login">Login:</label>
+
+      <input class="login" type="text" id="login" name="login" formControlName="login"
+        [class.ng-invalid]="isLoginInvalid()" required>
+
+      <span *ngIf="loginData.get('login')?.hasError('required') && isSubmitted">Esse campo não pode estar vazio</span>
+
+    </div>
+    <div class="form-group">
+
+      <label for="password">Senha:</label>
+
+      <input class="password" type="password" id="password" name="password" formControlName="password"
+        [class.ng-invalid]="isPasswordInvalid()" required>
+
+      <span *ngIf="loginData.get('password')?.hasError('required') && isSubmitted">Esse campo não pode estar
+        vazio</span>
+
+    </div>
+    <button type="submit">Entrar</button>
+  </form>
+</div>

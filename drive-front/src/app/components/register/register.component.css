@@ -52,6 +52,10 @@ input[type="password"] {
   border: 1px solid rgb(246, 12, 12);
 }
 
+span {
+  color: red;
+}
+
 .password.ng-invalid {
   border: 1px solid red;
 }

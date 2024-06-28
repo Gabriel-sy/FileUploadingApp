@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -12,8 +12,7 @@ export class RegisterComponent {
     login: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(30)]],
     password: ['', [Validators.required, Validators.minLength(5), Validators.maxLength(40)]]
   })
-
-
+  modalDisplay: string = "none";
   isSubmitted: boolean = false;
 
   constructor(private fb: FormBuilder, private router: Router) { }
@@ -22,22 +21,26 @@ export class RegisterComponent {
     this.isSubmitted = true;
     if (this.registerData.valid) {
       console.log(this.registerData.value)
-      this.router.navigateByUrl('login');
+      this.modalDisplay = "flex";
     }
   }
 
-  isLoginInvalid() {
+  isLoginInvalid(): boolean {
     if (this.registerData.get('login')?.invalid && this.isSubmitted) {
       return true;
     }
     return false;
   }
 
-  isPasswordInvalid() {
+  isPasswordInvalid(): boolean {
     if (this.registerData.get('password')?.invalid && this.isSubmitted) {
       return true;
     }
     return false;
+  }
+
+  redirect(): void {
+    this.router.navigateByUrl('login');
   }
 
 

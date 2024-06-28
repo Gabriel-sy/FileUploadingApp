@@ -1,0 +1,46 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.background {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(166, 164, 164, 0.2);
+  z-index: 0;
+}
+
+.main {
+  position: relative;
+  background-color: white;
+  min-width: 50%;
+  max-width: 75%;
+  min-height: 400px;
+  margin: 0 auto;
+  z-index: 10;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 10;
+}
+
+.filters {
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  padding: 10px;
+}
+
+.nome,
+.data,
+.tamanho {
+  position: relative;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+
+.nome {
+  text-align: left;
+}

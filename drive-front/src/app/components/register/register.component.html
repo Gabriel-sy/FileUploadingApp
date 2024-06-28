@@ -1,5 +1,5 @@
 <div class="card">
-  <h2>Registrar</h2>
+  <h2 class="registerh2">Registrar</h2>
   <form class="form" [formGroup]="registerData" (ngSubmit)="onSubmit()">
     <div class="form-group">
       <label for="login">Login:</label>
@@ -22,6 +22,12 @@
         </span>
       </div>
     </div>
+
+    <dialog [ngStyle]="{'display': modalDisplay}" id="modal" class="modal-success">
+      <h2>Cadastro bem sucedido!</h2>
+      <button (click)="redirect()">Fazer login</button>
+    </dialog>
+
     <div class="form-group">
 
       <label for="password">Senha:</label>

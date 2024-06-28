@@ -1,0 +1,75 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main {
+  position: relative;
+  z-index: 0;
+}
+
+.filters {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  text-align: center;
+  align-items: center;
+  padding: 10px;
+  border-top: 2px solid rgb(179, 177, 177, 0.2);
+  border-bottom: 2px solid rgb(179, 177, 177, 0.2);
+  z-index: 0;
+}
+
+.filters:hover {
+  background-color: rgb(181, 175, 175, 0.2);
+}
+
+.nome,
+.data,
+.tamanho {
+  position: relative;
+  word-break: break-all;
+  flex: 1;
+  padding: 5px;
+
+}
+
+.nome {
+  text-align: left;
+}
+
+.file-svg,
+.svg-points {
+  padding: 5px;
+}
+
+.svg:hover {
+  border-radius: 15px;
+  background-color: rgb(181, 175, 175, 0.5);
+  cursor: pointer;
+}
+
+.modal {
+  color: white;
+  display: block;
+  position: absolute;
+  background-color: #61B0A1;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  right: 40px;
+  top: -15px;
+  padding: 10px;
+  z-index: 10;
+  display: none;
+}
+
+.modal p {
+  padding: 5px;
+}
+
+p:hover {
+  cursor: pointer;
+  background-color: rgb(57, 203, 177);
+  border-radius: 10px;
+}

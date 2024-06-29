@@ -44,3 +44,87 @@
 .nome {
   text-align: left;
 }
+
+.add {
+  position: absolute;
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  flex-wrap: wrap;
+  background-color: #fff;
+  padding: 10px;
+  margin-left: 15px;
+  margin-top: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 11;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+  width: 80px;
+}
+
+button:hover {
+
+  background-color: rgba(148, 138, 138, 0.2);
+  transition: background-color 0.3s ease 0s;
+}
+
+.add p {
+  margin-left: 5px;
+}
+
+button:active {
+  border-style: dashed;
+}
+
+.addModal {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  margin-right: 25px;
+  margin-top: 30px;
+  min-width: 150px;
+  min-height: 70px;
+  flex: 1;
+  position: absolute;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 12;
+  text-align: center;
+}
+
+.addModal p:hover {
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: rgb(181, 177, 177, 0.2);
+  transition: background-color 0.2s ease 0s;
+}
+
+@media only screen and (max-width: 770px) {
+  .add {
+    width: 60px;
+  }
+
+  .add p {
+    margin-left: 0;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+  .add p {
+    display: none;
+  }
+
+  .add {
+    width: 50px;
+    margin-left: 0;
+  }
+}
+
+.file-input,
+.folder-input {
+  display: none;
+}

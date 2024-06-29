@@ -1,19 +1,37 @@
 <app-navbar></app-navbar>
 <div class="background">
 </div>
+<div [ngStyle]="{'display': optionsModalDisplay}" class="addModal">
+  <input (change)="onFileUpload($event)" type="file" class="file-input" name="file" #fileUpload>
+  <input type="file" class="folder-input" name="folder" webkitdirectory directory multiple #folderUpload>
+  <p (click)="fileUpload.click()" (click)="openFileModal()">Novo arquivo</p>
+  <p (click)="folderUpload.click()" (click)="openFileModal()">Nova pasta</p>
+</div>
+<button (click)="openFileModal()" class="add">
+  <svg fill="#000000" width="15px" height="15px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>plus</title>
+    <path
+      d="M30 14.75h-12.75v-12.75c0-0.69-0.56-1.25-1.25-1.25s-1.25 0.56-1.25 1.25v0 12.75h-12.75c-0.69 0-1.25 0.56-1.25 1.25s0.56 1.25 1.25 1.25v0h12.75v12.75c0 0.69 0.56 1.25 1.25 1.25s1.25-0.56 1.25-1.25v0-12.75h12.75c0.69 0 1.25-0.56 1.25-1.25s-0.56-1.25-1.25-1.25v0z">
+    </path>
+  </svg>
+  <p>Novo</p>
+</button>
 <div class="main">
+
   <div class="filters">
     <div class="nome">
       Nome
     </div>
     <div class="data">
-      Data de modificação
+      Data de criação
     </div>
+
     <div class="tamanho">
       Tamanho do arquivo
     </div>
   </div>
   <div class="file">
-    <app-file></app-file>
+    <app-file [files$]="files$"></app-file>
   </div>
+
 </div>

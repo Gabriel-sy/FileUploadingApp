@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FileService } from '../../services/file.service';
 import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
@@ -31,6 +31,7 @@ export class FolderComponent implements OnInit {
       this.folders$[i].size = size;
     }
   }
+
 
   openFolder() {
     this.lookingAtFolder.emit(true)

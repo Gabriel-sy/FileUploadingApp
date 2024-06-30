@@ -30,6 +30,8 @@ export class FileComponent implements OnInit {
       this.files$[i].size = size;
     }
   }
+
+ 
   
 
   openFile(id: string, name: string) {

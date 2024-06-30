@@ -20,8 +20,8 @@
   <p>Novo</p>
 </button>
 <div class="main">
-  <svg (click)="closeFolder()" class="back-arrow" *ngIf="lookingAtFolder" width="40px" height="40px" viewBox="0 0 24 24" fill="none"
-    xmlns="http://www.w3.org/2000/svg">
+  <svg (click)="closeFolder()" class="back-arrow" *ngIf="lookingAtFolder" width="40px" height="40px" viewBox="0 0 24 24"
+    fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M4 12H20M4 12L8 8M4 12L8 16" stroke="#000000" stroke-width="2" stroke-linecap="round"
       stroke-linejoin="round" />
   </svg>
@@ -41,7 +41,7 @@
 
     <app-folder [folders$]="folders$" [ngStyle]="{'display': folderDisplay}" (lookingAtFolder)="getFolderEvent($event)"
       (currentFolderId)="setFolderId($event)"></app-folder>
-    <app-file *ngIf="!lookingAtFolder" [files$]="files$"></app-file>
+    <app-file [ngStyle]="{'display': folderDisplay}" [files$]="files$"></app-file>
     <app-folder-files *ngIf="lookingAtFolder" [currentFolderId]="currentFolderId"></app-folder-files>
   </div>
 

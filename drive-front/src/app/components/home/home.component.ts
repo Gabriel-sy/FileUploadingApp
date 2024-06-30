@@ -5,6 +5,7 @@ import { FolderService } from '../../services/folder.service';
 import { FolderClass } from '../folder/Folder';
 import { Observable } from 'rxjs';
 import { SharedService } from '../../services/shared.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home',
@@ -20,14 +21,14 @@ export class HomeComponent implements OnInit {
   folderDisplay: string = 'block'
   currentFolderId: string = ''
 
-  constructor(private fileService: FileService, private folderService: FolderService, private sharedService: SharedService) {
+  constructor(private fileService: FileService, 
+    private folderService: FolderService, 
+    private sharedService: SharedService,
+    private router: Router) {
 
   }
 
-  closeFolder() {
-    this.lookingAtFolder = false;
-    this.folderDisplay = 'block';
-  }
+  
 
   getFolderEvent(event: boolean) {
     this.lookingAtFolder = event;
@@ -39,14 +40,27 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.findAllFiles()
-    this.findAllFolders()
+    this.fileService.getAllFiles().subscribe({
+      next: (res: FileClass[]) => {
+        this.files$ = res
+        
+      },
+      error: (err) => console.log(err)
+    })
+    this.folderService.findAllFolders().subscribe((res: FolderClass[]) => {
+      this.folders$ = res;
+    })
   }
 
   findAllFiles() {
     this.fileService.getAllFiles().subscribe({
       next: (res: FileClass[]) => {
         this.files$ = res
+        for (let i = 0; i < this.files$.length; i++) {
+          //Formatando o tamanho do arquivo.
+          const size: string = this.sharedService.formatBytes(this.files$[i].size as unknown as number);
+          this.files$[i].size = size;
+        }
       },
       error: (err) => console.log(err)
     })
@@ -55,7 +69,18 @@ export class HomeComponent implements OnInit {
   findAllFolders() {
     this.folderService.findAllFolders().subscribe((res: FolderClass[]) => {
       this.folders$ = res;
+      for (let i = 0; i < this.folders$.length; i++) {
+        //Formatando o tamanho do arquivo.
+        const size: string = this.sharedService.formatBytes(this.folders$[i].size as unknown as number);
+        this.folders$[i].size = size;
+      }
     });
+  }
+
+  closeFolder() {
+    this.lookingAtFolder = false;
+    this.folderDisplay = 'block';
+    
   }
 
   openFileModal() {
@@ -96,9 +121,9 @@ export class HomeComponent implements OnInit {
       folderName = folderUrl.substring(0, removeAfter);
 
       this.folderService.saveFolder(folderName).subscribe((res: FolderClass) => {
-        this.findAllFolders()
         folderId = res.id;
         this.saveFileAndInsertFolderId(files, folderId)
+        
       })
 
 
@@ -127,11 +152,17 @@ export class HomeComponent implements OnInit {
       formData.append("file", file, file.name);
 
       this.fileService.saveFile(formData).subscribe({
-        next: (res) => this.insertFolderIdInNewFile(res.body as FileClass, folderId),
+        next: (res) => {
+          this.insertFolderIdInNewFile(res.body as FileClass, folderId)
+
+        },
         error: (err) => console.log(err)
       })
     }
-    this.folderService.setFolderSize(folderId as unknown as number, folderSize).subscribe()
+    this.folderService.setFolderSize(folderId as unknown as number, folderSize).subscribe(() => {
+      this.findAllFolders()
+    })
+    
   }
 
   

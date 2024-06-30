@@ -1,22 +1,30 @@
-import { Component, Input } from '@angular/core';
-import { FileClass } from './File';
+import { Component, Input, OnInit } from '@angular/core';
 import { FileService } from '../../services/file.service';
-import { SharedService } from '../../services/shared.service';
+import { FileClass } from '../file/File';
+import { FolderService } from '../../services/folder.service';
 
 @Component({
-  selector: 'app-file',
-  templateUrl:'./file.component.html',
-  styleUrl: './file.component.css'
+  selector: 'app-folder-files',
+  templateUrl: './folder-files.component.html',
+  styleUrl: './folder-files.component.css'
 })
-export class FileComponent {
+export class FolderFilesComponent implements OnInit {
 
+  files$: FileClass[] = [];
   txtModalDisplay: string = 'none';
   modalDisplay: string = 'none'
   txtFileContent: string = '';
   txtFileTitle: string = '';
-  @Input() files$: FileClass[] = []
+  @Input() currentFolderId: string = '';
 
-  constructor(private fileService: FileService, private sharedService: SharedService) { }
+  ngOnInit(): void {
+    this.folderService.findAllFoldersByFolderId(this.currentFolderId)
+      .subscribe((res: FileClass[]) => {
+        this.files$ = res;
+      })
+  }
+
+  constructor(private folderService: FolderService, private fileService: FileService) { }
 
   stopPropagation(event: Event) {
     event.stopPropagation();

@@ -21,6 +21,7 @@ public class File {
     private String type;
     @Lob
     private byte[] fileBytes;
+    private Long folderId;
 
     public File(String originalName, Long size, String type, byte[] fileBytes, String createdDate, String name) {
         this.name = name;
@@ -29,5 +30,6 @@ public class File {
         this.size = size;
         this.type = type;
         this.fileBytes = fileBytes;
+
     }
 }

@@ -24,7 +24,6 @@ a {
 
 .main-content,
 .login-content {
-  width: 150px;
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
@@ -33,4 +32,9 @@ a {
 .login-content {
   margin-left: auto;
   width: 90px;
+}
+
+.main-content {
+  margin-right: 0 auto;
+  margin-left: 15px;
 }

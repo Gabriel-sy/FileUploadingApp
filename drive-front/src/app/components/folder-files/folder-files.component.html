@@ -10,7 +10,7 @@
 </div>
 
 <div class="main" *ngFor="let file of files$">
-  <div class="filters" (click)="openFile(file.id, file.originalName)" *ngIf="file.folderId == null">
+  <div class="filters" (click)="openFile(file.id, file.originalName)">
     <div class="file-svg">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 50 50" width="30px" height="30px">
         <path
@@ -24,24 +24,23 @@
     <div class="data">
       {{ file.createdDate }}
     </div>
+
     <div class="tamanho">
       {{ file.size }}
-
     </div>
 
     <div class="svg-points">
 
       <div class="svg">
-        <svg (click)="stopPropagation($event)" (click)="openModal(file)" fill="#000000" width="25px" height="25px"
-          viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <svg (click)="stopPropagation($event)" (click)="openModal(file)" fill="#000000" width="25px" height="25px" viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg">
           <path
             d="M12,7a2,2,0,1,0-2-2A2,2,0,0,0,12,7Zm0,10a2,2,0,1,0,2,2A2,2,0,0,0,12,17Zm0-7a2,2,0,1,0,2,2A2,2,0,0,0,12,10Z" />
         </svg>
       </div>
     </div>
   </div>
-  <div (click)="downloadFile(file.id, file.originalName)" [ngStyle]="{'display': file.isModalOpen ? 'block' : 'none'}"
-    class="modal">
+  <div class="modal" (click)="downloadFile(file.id, file.originalName)" [ngStyle]="{'display': file.isModalOpen ? 'block' : 'none'}">
     <p>Download</p>
   </div>
 

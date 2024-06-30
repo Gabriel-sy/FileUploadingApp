@@ -1,22 +1,34 @@
-import { Component, Input } from '@angular/core';
-import { FileClass } from './File';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FileService } from '../../services/file.service';
-import { SharedService } from '../../services/shared.service';
+import { FileClass } from '../file/File';
+import { FolderService } from '../../services/folder.service';
+import { FolderClass } from './Folder';
 
 @Component({
-  selector: 'app-file',
-  templateUrl:'./file.component.html',
-  styleUrl: './file.component.css'
+  selector: 'app-folder',
+  templateUrl: './folder.component.html',
+  styleUrl: './folder.component.css'
 })
-export class FileComponent {
+export class FolderComponent {
 
   txtModalDisplay: string = 'none';
   modalDisplay: string = 'none'
   txtFileContent: string = '';
   txtFileTitle: string = '';
-  @Input() files$: FileClass[] = []
+  @Input() folders$: FolderClass[] = [];
+  @Output() lookingAtFolder = new EventEmitter<boolean>()
+  @Output() currentFolderId = new EventEmitter<string>()
 
-  constructor(private fileService: FileService, private sharedService: SharedService) { }
+  constructor(private fileService: FileService, private folderService: FolderService) { }
+
+
+  openFolder() {
+    this.lookingAtFolder.emit(true)
+  }
+
+  setCurrentFolder(folderId: string){
+    this.currentFolderId.emit(folderId)
+  }
 
   stopPropagation(event: Event) {
     event.stopPropagation();

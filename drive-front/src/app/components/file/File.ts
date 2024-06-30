@@ -7,7 +7,10 @@ export class FileClass {
   type: string;
   fileBytes: string[];
   isModalOpen: boolean;
-  constructor(id: string, originalName: string, size: string, type: string, fileBytes: string[], createdDate: string, isModalOpen: boolean, name: string) {
+  folderId: string;
+
+  constructor(id: string, originalName: string, size: string, type: string, fileBytes: string[], createdDate: string, isModalOpen: boolean, name: string, folderId: string) {
+    this.folderId = folderId;
     this.name = name
     this.isModalOpen = isModalOpen;
     this.createdDate = createdDate;

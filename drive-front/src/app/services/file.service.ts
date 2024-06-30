@@ -1,6 +1,8 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FileClass } from '../components/file/File';
+import { Observable } from 'rxjs';
+import { FolderClass } from '../components/folder/Folder';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +27,18 @@ export class FileService {
     return this.http.post('http://localhost:8080/api/upload', formData, { observe: 'response' });
   }
 
+  saveFolderFile(formData: FormData){
+    return this.http.post<FileClass>('http://localhost:8080/api/upload', formData);
+  }
+
   getAllFiles() {
     return this.http.get<FileClass[]>('http://localhost:8080/api/get/all')
+  }
+
+  saveFolderId(id: number, folderId: number){
+    let header = new HttpHeaders();
+    header = header.set('Content-Type', 'application/json; charset=utf-8')
+    var json = JSON.stringify({ id: id, folderId: folderId })
+    return this.http.post<FolderClass>('http://localhost:8080/api/save/folderid', json, {headers: header})
   }
 }

@@ -10,6 +10,8 @@ import { LoginComponent } from './components/login/login.component';
 import { HomeComponent } from './components/home/home.component';
 import { FileComponent } from './components/file/file.component';
 import { provideHttpClient } from '@angular/common/http';
+import { FolderComponent } from './components/folder/folder.component';
+import { FolderFilesComponent } from './components/folder-files/folder-files.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { provideHttpClient } from '@angular/common/http';
     RegisterComponent,
     LoginComponent,
     HomeComponent,
-    FileComponent
+    FileComponent,
+    FolderComponent,
+    FolderFilesComponent
   ],
   imports: [
     BrowserModule,

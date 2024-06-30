@@ -128,3 +128,10 @@ button:active {
 .folder-input {
   display: none;
 }
+
+.back-arrow:hover {
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: rgb(181, 177, 177, 0.2);
+  transition: background-color 0.2s ease 0s;
+}

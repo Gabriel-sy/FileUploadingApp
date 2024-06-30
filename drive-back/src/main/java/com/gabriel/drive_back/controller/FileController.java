@@ -61,4 +61,5 @@ public class FileController {
     public List<File> findAllByFolderId(@PathVariable Long id){
         return fileService.findFileByFolderId(id);
     }
+
 }

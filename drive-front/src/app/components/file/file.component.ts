@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FileClass } from './File';
 import { FileService } from '../../services/file.service';
 import { SharedService } from '../../services/shared.service';
@@ -8,7 +8,8 @@ import { SharedService } from '../../services/shared.service';
   templateUrl:'./file.component.html',
   styleUrl: './file.component.css'
 })
-export class FileComponent {
+export class FileComponent implements OnInit {
+
 
   txtModalDisplay: string = 'none';
   modalDisplay: string = 'none'
@@ -21,6 +22,15 @@ export class FileComponent {
   stopPropagation(event: Event) {
     event.stopPropagation();
   }
+
+  ngOnInit(): void {
+    for (let i = 0; i < this.files$.length; i++) {
+      //Formatando o tamanho do arquivo.
+      const size: string = this.sharedService.formatBytes(this.files$[i].size as unknown as number);
+      this.files$[i].size = size;
+    }
+  }
+  
 
   openFile(id: string, name: string) {
 
@@ -44,52 +54,14 @@ export class FileComponent {
   }
 
   downloadFile(id: string, name: string) {
-    var newFile: FileClass;
-    this.fileService.getFileProperties(id).subscribe((res: FileClass) => {
-      newFile = res;
-    })
-    if (name.includes(".pdf")) {
-      this.fileService.getFileBytes(id).subscribe((response) => {
-
-        let file = new Blob([response as BlobPart], { type: 'application/pdf' });
-
-        var fileURL = URL.createObjectURL(file);
-
-        var a = document.createElement('a')
-
-        a.href = fileURL;
-
-        a.download = newFile.originalName;
-
-        document.body.appendChild(a);
-        a.click();
-      }
-      )
-    } else {
-      this.fileService.getFileBytes(id).subscribe((response) => {
-
-        let file = new Blob([response as BlobPart], { type: 'text' });
-
-        var fileURL = URL.createObjectURL(file);
-
-        var a = document.createElement('a')
-
-        a.href = fileURL;
-
-        a.download = name;
-
-        document.body.appendChild(a);
-        a.click();
-      })
-    }
+    this.sharedService.downloadFile(id, name);
   }
 
-
-  closeTxtModal() {
-    this.txtModalDisplay = 'none';
+  closeTxtModal(){
+    this.txtModalDisplay = 'none'
   }
-
   openModal(file: FileClass) {
+    
     if (file.isModalOpen) {
       file.isModalOpen = false;
     } else {

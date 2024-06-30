@@ -4,10 +4,11 @@ import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
 import { FolderClass } from '../folder/Folder';
 import { Observable } from 'rxjs';
+import { SharedService } from '../../services/shared.service';
 
 @Component({
   selector: 'app-home',
-  templateUrl:'./home.component.html',
+  templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
@@ -19,11 +20,11 @@ export class HomeComponent implements OnInit {
   folderDisplay: string = 'block'
   currentFolderId: string = ''
 
-  constructor(private fileService: FileService, private folderService: FolderService) {
+  constructor(private fileService: FileService, private folderService: FolderService, private sharedService: SharedService) {
 
   }
 
-  closeFolder(){
+  closeFolder() {
     this.lookingAtFolder = false;
     this.folderDisplay = 'block';
   }
@@ -33,7 +34,7 @@ export class HomeComponent implements OnInit {
     this.folderDisplay = 'none';
   }
 
-  setFolderId(event: string){
+  setFolderId(event: string) {
     this.currentFolderId = event;
   }
 
@@ -42,15 +43,17 @@ export class HomeComponent implements OnInit {
     this.findAllFolders()
   }
 
-  findAllFiles(){
+  findAllFiles() {
     this.fileService.getAllFiles().subscribe({
-      next: (res: FileClass[]) => this.files$ = res,
+      next: (res: FileClass[]) => {
+        this.files$ = res
+      },
       error: (err) => console.log(err)
     })
   }
 
-  findAllFolders(){
-    this.folderService.findAllFolders().subscribe((res) => {
+  findAllFolders() {
+    this.folderService.findAllFolders().subscribe((res: FolderClass[]) => {
       this.folders$ = res;
     });
   }
@@ -80,11 +83,11 @@ export class HomeComponent implements OnInit {
       }
       );
   }
-  
+
 
   onFolderUpload(event: any) {
     var folderName: string = '';
-    var folderId: string;  
+    var folderId: string;
 
     if (event.target.files.length > 0) {
       let files = event.target.files;
@@ -97,38 +100,41 @@ export class HomeComponent implements OnInit {
         folderId = res.id;
         this.saveFileAndInsertFolderId(files, folderId)
       })
-      
-      
-        
-        // if (!(files[i].webkitRelativePath.split('/').length > 2)) {
-        //   Pegando nome da pasta
 
-        // }
-      }
-      
+
+
+      // if (!(files[i].webkitRelativePath.split('/').length > 2)) {
+      //   Pegando nome da pasta
+
+      // }
     }
 
-    insertFolderIdInNewFile(fileSaved: FileClass, folderId: string){
-      console.log("insert id in new file folderId: " +folderId)
-      this.fileService.saveFolderId(fileSaved.id as unknown as number, folderId as unknown as number)
+  }
+
+  insertFolderIdInNewFile(fileSaved: FileClass, folderId: string) {
+    this.fileService.saveFolderId(fileSaved.id as unknown as number, folderId as unknown as number)
       .subscribe((res) => {
         console.log(res)
       })
-    }
-
-    saveFileAndInsertFolderId(files: any, folderId: string){
-      for (var i = 0; i < files.length; ++i) {
-        const file: File = files[i]
-
-        const formData = new FormData();
-        formData.append("file", file, file.name);
-
-        this.fileService.saveFile(formData).subscribe({
-          next: (res) => this.insertFolderIdInNewFile(res.body as FileClass, folderId),
-          error: (err) => console.log(err)
-        })
-        }
-    }
-   
   }
+
+  saveFileAndInsertFolderId(files: any, folderId: string) {
+    var folderSize: number = 0;
+    for (var i = 0; i < files.length; ++i) {
+      const file: File = files[i]
+      folderSize += file.size as number;
+      const formData = new FormData();
+      formData.append("file", file, file.name);
+
+      this.fileService.saveFile(formData).subscribe({
+        next: (res) => this.insertFolderIdInNewFile(res.body as FileClass, folderId),
+        error: (err) => console.log(err)
+      })
+    }
+    this.folderService.setFolderSize(folderId as unknown as number, folderSize).subscribe()
+  }
+
+  
+
+}
 

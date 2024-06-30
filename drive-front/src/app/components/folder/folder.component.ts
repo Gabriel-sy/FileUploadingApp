@@ -3,13 +3,14 @@ import { FileService } from '../../services/file.service';
 import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
 import { FolderClass } from './Folder';
+import { SharedService } from '../../services/shared.service';
 
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.component.html',
   styleUrl: './folder.component.css'
 })
-export class FolderComponent {
+export class FolderComponent implements OnInit {
 
   txtModalDisplay: string = 'none';
   modalDisplay: string = 'none'
@@ -19,8 +20,17 @@ export class FolderComponent {
   @Output() lookingAtFolder = new EventEmitter<boolean>()
   @Output() currentFolderId = new EventEmitter<string>()
 
-  constructor(private fileService: FileService, private folderService: FolderService) { }
+  constructor(private fileService: FileService, private folderService: FolderService, private sharedService: SharedService) { }
 
+  
+
+  ngOnInit(): void {
+    for (let i = 0; i < this.folders$.length; i++) {
+      //Formatando o tamanho da pasta.
+      const size: string = this.sharedService.formatBytes(this.folders$[i].size as unknown as number);
+      this.folders$[i].size = size;
+    }
+  }
 
   openFolder() {
     this.lookingAtFolder.emit(true)
@@ -56,44 +66,7 @@ export class FolderComponent {
   }
 
   downloadFile(id: string, name: string) {
-    var newFile: FileClass;
-    this.fileService.getFileProperties(id).subscribe((res: FileClass) => {
-      newFile = res;
-    })
-    if (name.includes(".pdf")) {
-      this.fileService.getFileBytes(id).subscribe((response) => {
-
-        let file = new Blob([response as BlobPart], { type: 'application/pdf' });
-
-        var fileURL = URL.createObjectURL(file);
-
-        var a = document.createElement('a')
-
-        a.href = fileURL;
-
-        a.download = newFile.originalName;
-
-        document.body.appendChild(a);
-        a.click();
-      }
-      )
-    } else {
-      this.fileService.getFileBytes(id).subscribe((response) => {
-
-        let file = new Blob([response as BlobPart], { type: 'text' });
-
-        var fileURL = URL.createObjectURL(file);
-
-        var a = document.createElement('a')
-
-        a.href = fileURL;
-
-        a.download = name;
-
-        document.body.appendChild(a);
-        a.click();
-      })
-    }
+    this.sharedService.downloadFile(id, name);
   }
 
 

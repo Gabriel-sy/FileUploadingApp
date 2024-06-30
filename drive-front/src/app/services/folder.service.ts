@@ -21,7 +21,14 @@ export class FolderService {
     return this.http.get<FolderClass[]>('http://localhost:8080/folder/findall')
   }
 
-  findAllFoldersByFolderId(id: string){
+  findAllFilesByFolderId(id: string){
     return this.http.get<FileClass[]>('http://localhost:8080/api/get/folderid/' + id)
+  }
+
+  setFolderSize(folderId: number, size: number){
+    let header = new HttpHeaders();
+    header = header.set('Content-Type', 'application/json; charset=utf-8')
+    var json = JSON.stringify({ folderId: folderId, size: size })
+    return this.http.post('http://localhost:8080/folder/save/foldersize', json, { headers: header })
   }
 }

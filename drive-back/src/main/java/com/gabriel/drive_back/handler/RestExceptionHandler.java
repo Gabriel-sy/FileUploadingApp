@@ -2,6 +2,7 @@ package com.gabriel.drive_back.handler;
 
 import com.gabriel.drive_back.exception.ExceptionDetails;
 import com.gabriel.drive_back.exception.FileNotFoundException;
+import com.gabriel.drive_back.exception.FolderNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -17,6 +18,18 @@ public class RestExceptionHandler {
         return new ResponseEntity<>(
                 ExceptionDetails.builder()
                         .title("Arquivo não encontrado")
+                        .status(HttpStatus.NOT_FOUND.value())
+                        .details(exception.getMessage())
+                        .time(LocalDateTime.now())
+                        .build(), HttpStatus.NOT_FOUND
+        );
+    }
+
+    @ExceptionHandler(FolderNotFoundException.class)
+    public ResponseEntity<ExceptionDetails> folderNotFoundExceptionHandler(FolderNotFoundException exception){
+        return new ResponseEntity<>(
+                ExceptionDetails.builder()
+                        .title("Pasta não encontrada")
                         .status(HttpStatus.NOT_FOUND.value())
                         .details(exception.getMessage())
                         .time(LocalDateTime.now())

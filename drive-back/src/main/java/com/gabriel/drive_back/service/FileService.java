@@ -1,6 +1,7 @@
 package com.gabriel.drive_back.service;
 
 import com.gabriel.drive_back.domain.File;
+import com.gabriel.drive_back.domain.FileDTO;
 import com.gabriel.drive_back.exception.FileNotFoundException;
 import com.gabriel.drive_back.repository.FileRepository;
 import jakarta.transaction.Transactional;
@@ -45,4 +46,14 @@ public class FileService {
         return fileRepository.findByFolderId(id).orElseThrow(IllegalArgumentException::new);
     }
 
+    public void saveFolderId(FileDTO fileDTO) {
+        File fileFound = findFileById(fileDTO.id());
+        fileFound.setFolderId(fileDTO.folderId());
+        fileRepository.save(fileFound);
+    }
+
+    @Transactional
+    public void deleteFileByFolderId(Long id){
+        fileRepository.deleteByFolderId(id);
+    }
 }

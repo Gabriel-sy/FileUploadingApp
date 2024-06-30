@@ -1,16 +1,17 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FileService } from '../../services/file.service';
 import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
 import { FolderClass } from './Folder';
 import { SharedService } from '../../services/shared.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-folder',
   templateUrl: './folder.component.html',
   styleUrl: './folder.component.css'
 })
-export class FolderComponent implements OnInit {
+export class FolderComponent implements OnInit, OnDestroy {
 
   txtModalDisplay: string = 'none';
   modalDisplay: string = 'none'
@@ -19,10 +20,9 @@ export class FolderComponent implements OnInit {
   @Input() folders$: FolderClass[] = [];
   @Output() lookingAtFolder = new EventEmitter<boolean>()
   @Output() currentFolderId = new EventEmitter<string>()
+  unsubscribeSignal: Subject<void> = new Subject();
 
   constructor(private fileService: FileService, private folderService: FolderService, private sharedService: SharedService) { }
-
-  
 
   ngOnInit(): void {
     for (let i = 0; i < this.folders$.length; i++) {
@@ -32,37 +32,16 @@ export class FolderComponent implements OnInit {
     }
   }
 
-
-  openFolder() {
-    this.lookingAtFolder.emit(true)
-  }
-
-  setCurrentFolder(folderId: string){
-    this.currentFolderId.emit(folderId)
-  }
-
-  stopPropagation(event: Event) {
-    event.stopPropagation();
+  ngOnDestroy(): void {
+    this.unsubscribeSignal.next()
+    this.unsubscribeSignal.unsubscribe()
   }
 
   openFile(id: string, name: string) {
-
     if (name.includes(".pdf")) {
-
-      this.fileService.getFileBytes(id).subscribe((response) => {
-
-        let file = new Blob([response as BlobPart], { type: 'application/pdf' });
-
-        var fileURL = URL.createObjectURL(file);
-        window.open(fileURL)
-      })
-    } else {
-      this.txtModalDisplay = 'flex'
-      var newFile: FileClass;
-      this.fileService.getFileContent(id).subscribe((res: string) => {
-        this.txtFileContent = res;
-        this.txtFileTitle = name.replace(".txt", "");
-      })
+      this.sharedService.openPdf(id)
+    } else if (name.includes(".txt")) {
+      this.openTxt(id, name)
     }
   }
 
@@ -70,16 +49,60 @@ export class FolderComponent implements OnInit {
     this.sharedService.downloadFile(id, name);
   }
 
+  openTxt(id: string, name: string) {
+    this.txtModalDisplay = 'flex'
+    this.fileService.getFileContent(id)
+      .pipe(takeUntil(this.unsubscribeSignal))
+      .subscribe((res: string) => {
+        this.txtFileContent = res;
+        this.txtFileTitle = name.replace(".txt", "");
+      })
+  }
+
+  deleteFolder(folderId: string) {
+    this.folderService.deleteFolder(folderId)
+      .pipe(takeUntil(this.unsubscribeSignal))
+      .subscribe({
+        next: () => this.deletefilesByFolderid(folderId)
+      })
+  }
+
+  deletefilesByFolderid(folderId: string){
+    this.fileService.deleteFilesByFolderId(folderId)
+    .pipe(takeUntil(this.unsubscribeSignal))
+    .subscribe({
+      complete: () => this.findAllFolders()
+    })
+  }
+
+  findAllFolders() {
+    this.folderService.findAllFolders()
+      .pipe(takeUntil(this.unsubscribeSignal))
+      .subscribe((res: FolderClass[]) =>
+        this.folders$ = res)
+  }
+
+  openFolder() {
+    this.lookingAtFolder.emit(true)
+  }
+
+  setCurrentFolder(folderId: string) {
+    this.currentFolderId.emit(folderId)
+  }
+
+  stopPropagation(event: Event) {
+    event.stopPropagation();
+  }
 
   closeTxtModal() {
     this.txtModalDisplay = 'none';
   }
 
-  openModal(file: FileClass) {
-    if (file.isModalOpen) {
-      file.isModalOpen = false;
+  openModal(folder: FolderClass) {
+    if (folder.isModalOpen) {
+      folder.isModalOpen = false;
     } else {
-      file.isModalOpen = true;
+      folder.isModalOpen = true;
     }
   }
 

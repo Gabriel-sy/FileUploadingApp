@@ -7,6 +7,7 @@ import com.gabriel.drive_back.domain.FolderSizeDTO;
 import com.gabriel.drive_back.repository.FileRepository;
 import com.gabriel.drive_back.repository.FolderRepository;
 import com.gabriel.drive_back.service.FileService;
+import com.gabriel.drive_back.service.FolderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,22 +19,16 @@ import java.util.List;
 @RequestMapping("/folder")
 public class FolderController {
     private final FolderRepository folderRepository;
-    private final FileService fileService;
-    private final FileRepository fileRepository;
+    private final FolderService folderService;
 
-    public FolderController(FolderRepository folderRepository, FileService fileService, FileRepository fileRepository) {
+    public FolderController(FolderRepository folderRepository, FolderService folderService) {
         this.folderRepository = folderRepository;
-        this.fileService = fileService;
-        this.fileRepository = fileRepository;
+        this.folderService = folderService;
     }
 
     @PostMapping(path = "/create")
     public ResponseEntity<Folder> saveFolder(@RequestBody FolderDTO folderDTO){
-
-        LocalDateTime timeCreated = LocalDateTime.now();
-        String formattedTime = DateTimeFormatter.ofPattern("dd-MM-yyyy").format(timeCreated);
-        Folder folder = new Folder(folderDTO.name(), formattedTime);
-        Folder savedFolder = folderRepository.save(folder);
+        Folder savedFolder = folderService.saveNewFolder(folderDTO);
 
         return ResponseEntity.ok(savedFolder);
     }
@@ -45,14 +40,19 @@ public class FolderController {
 
     @GetMapping(path = "/find/{id}")
     public ResponseEntity<Folder> findFolderById(@PathVariable Long id){
-        return ResponseEntity.ok(folderRepository.findById(id).orElseThrow(IllegalArgumentException::new));
+        return ResponseEntity.ok(folderService.findFolderById(id));
     }
 
     @PostMapping(path = "/save/foldersize")
     public ResponseEntity<Void> saveFolderSize(@RequestBody FolderSizeDTO folderSizeDTO){
-        Folder folder = folderRepository.findById(folderSizeDTO.folderId()).orElseThrow(IllegalArgumentException::new);
-        folder.setSize(folderSizeDTO.size());
-        folderRepository.save(folder);
+        folderService.saveFolderSize(folderSizeDTO);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(path = "delete/{id}")
+    public ResponseEntity<Void> deleteFolder(@PathVariable Long id){
+        folderRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 

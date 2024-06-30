@@ -10,4 +10,5 @@ import java.util.Optional;
 @Repository
 public interface FileRepository extends JpaRepository<File, Long> {
     Optional<List<File>> findByFolderId(Long folderId);
+    void deleteByFolderId(Long folderId);
 }

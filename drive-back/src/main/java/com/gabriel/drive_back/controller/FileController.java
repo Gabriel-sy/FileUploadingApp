@@ -12,7 +12,7 @@ import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/file")
 public class FileController {
     private final FileRepository fileRepository;
     private final FileService fileService;
@@ -31,9 +31,8 @@ public class FileController {
 
     @PostMapping(path = "/save/folderid")
     public ResponseEntity<Void> saveFolderId(@RequestBody FileDTO fileDTO){
-        File fileFound = fileService.findFileById(fileDTO.id());
-        fileFound.setFolderId(fileDTO.folderId());
-        fileRepository.save(fileFound);
+        fileService.saveFolderId(fileDTO);
+
         return ResponseEntity.ok().build();
     }
 
@@ -60,6 +59,18 @@ public class FileController {
     @GetMapping(path = "/get/folderid/{id}")
     public List<File> findAllByFolderId(@PathVariable Long id){
         return fileService.findFileByFolderId(id);
+    }
+
+    @DeleteMapping(path = "/delete/{id}")
+    public ResponseEntity<Void> deleteFile(@PathVariable Long id){
+        fileRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(path = "/delete/byfolderid/{id}")
+    public ResponseEntity<Void> deleteFileByFolderId(@PathVariable Long id){
+        fileService.deleteFileByFolderId(id);
+        return ResponseEntity.ok().build();
     }
 
 }

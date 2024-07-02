@@ -40,9 +40,10 @@
       </div>
     </div>
   </div>
-  <div (click)="downloadFile(file.id, file.originalName)" [ngStyle]="{'display': file.isModalOpen ? 'block' : 'none'}"
+  <div [ngStyle]="{'display': file.isModalOpen ? 'block' : 'none'}"
     class="modal">
-    <p>Download</p>
+    <p (click)="downloadFile(file.id, file.originalName)">Download</p>
+    <p (click)="deleteFile(file.id)">Deletar</p>
   </div>
 
 </div>

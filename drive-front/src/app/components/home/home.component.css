@@ -4,12 +4,8 @@
   box-sizing: border-box;
 }
 
-.background {
-  position: absolute;
-  width: 100%;
-  height: 100%;
+::ng-deep body {
   background-color: rgb(166, 164, 164, 0.2);
-  z-index: 0;
 }
 
 .main {
@@ -129,9 +125,26 @@ button:active {
   display: none;
 }
 
-.back-arrow:hover {
+.back-arrow:hover,
+.add-svg:hover,
+.arrow-up:hover,
+.arrow-down:hover {
   border-radius: 10px;
   cursor: pointer;
   background-color: rgb(181, 177, 177, 0.2);
   transition: background-color 0.2s ease 0s;
+}
+
+.nome {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.data,
+.tamanho {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
 }

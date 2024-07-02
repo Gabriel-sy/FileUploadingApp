@@ -42,8 +42,7 @@
   text-align: left;
 }
 
-.file-svg,
-.svg-points {
+.file-svg {
   padding: 5px;
 }
 
@@ -106,4 +105,11 @@
   cursor: pointer;
   background-color: rgb(181, 177, 177, 0.2);
   transition: background-color 0.2s ease 0s;
+}
+
+@media only screen and (max-width: 600px) {
+  .svg-points {
+    width: 20px;
+    height: 20px;
+  }
 }

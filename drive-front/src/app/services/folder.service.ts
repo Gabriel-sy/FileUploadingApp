@@ -17,18 +17,22 @@ export class FolderService {
     return this.http.post<FolderClass>('http://localhost:8080/folder/create', json, { headers: header })
   }
 
-  findAllFolders(){
+  findAllFolders() {
     return this.http.get<FolderClass[]>('http://localhost:8080/folder/findall')
   }
 
-  findAllFilesByFolderId(id: string){
-    return this.http.get<FileClass[]>('http://localhost:8080/api/get/folderid/' + id)
+  findAllFilesByFolderId(id: string) {
+    return this.http.get<FileClass[]>('http://localhost:8080/file/get/folderid/' + id)
   }
 
-  setFolderSize(folderId: number, size: number){
+  setFolderSize(folderId: number, size: number) {
     let header = new HttpHeaders();
     header = header.set('Content-Type', 'application/json; charset=utf-8')
     var json = JSON.stringify({ folderId: folderId, size: size })
     return this.http.post('http://localhost:8080/folder/save/foldersize', json, { headers: header })
+  }
+
+  deleteFolder(folderId: string){
+    return this.http.delete('http://localhost:8080/folder/delete/' + folderId);
   }
 }

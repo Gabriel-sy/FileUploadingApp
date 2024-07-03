@@ -1,5 +1,8 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
+import { AuthService } from '../../services/auth.service';
+import { Jwt } from '../../services/Jwt';
+
 
 @Component({
   selector: 'app-login',
@@ -14,11 +17,19 @@ export class LoginComponent {
 
   isSubmitted: boolean = false;
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder, private authService: AuthService) {
+
+  }
 
   onSubmit() {
     if (this.loginData.valid) {
-      console.log(this.loginData.value)
+      var values = this.loginData.value;
+      if (values.login && values.password) {
+        this.authService.login(values.login, values.password)
+        .subscribe((res: Jwt) => {
+          this.authService.setSession(res.jwt)
+        });
+      }
     }
     this.isSubmitted = true;
   }
@@ -36,4 +47,6 @@ export class LoginComponent {
     }
     return false;
   }
+
+  
 }

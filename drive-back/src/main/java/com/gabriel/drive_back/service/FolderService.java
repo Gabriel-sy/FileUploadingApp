@@ -1,10 +1,9 @@
 package com.gabriel.drive_back.service;
 
-import com.gabriel.drive_back.domain.Folder;
-import com.gabriel.drive_back.domain.FolderDTO;
-import com.gabriel.drive_back.domain.FolderSizeDTO;
+import com.gabriel.drive_back.domain.folder.Folder;
+import com.gabriel.drive_back.domain.folder.FolderDTO;
+import com.gabriel.drive_back.domain.folder.FolderSizeDTO;
 import com.gabriel.drive_back.exception.FolderNotFoundException;
-import com.gabriel.drive_back.repository.FileRepository;
 import com.gabriel.drive_back.repository.FolderRepository;
 import org.springframework.stereotype.Service;
 

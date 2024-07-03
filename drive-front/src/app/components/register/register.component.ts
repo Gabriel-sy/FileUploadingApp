@@ -1,10 +1,11 @@
 import { Component, ElementRef, Renderer2, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-register',
-  templateUrl: './register.component.html',
+  templateUrl:'./register.component.html',
   styleUrl: './register.component.css'
 })
 export class RegisterComponent {
@@ -15,13 +16,18 @@ export class RegisterComponent {
   modalDisplay: string = "none";
   isSubmitted: boolean = false;
 
-  constructor(private fb: FormBuilder, private router: Router) { }
+  constructor(private fb: FormBuilder, 
+    private router: Router, 
+    private authService: AuthService) { }
 
   onSubmit() {
     this.isSubmitted = true;
     if (this.registerData.valid) {
-      console.log(this.registerData.value)
-      this.modalDisplay = "flex";
+      var values = this.registerData.value;
+      if(values.login && values.password){
+        this.authService.register(values.login, values.password).subscribe();
+        this.modalDisplay = "flex";
+      }
     }
   }
 

@@ -34,6 +34,11 @@ a {
   width: 90px;
 }
 
+.login-content:hover {
+  cursor: pointer;
+  background-color: rgb(100, 183, 168, 0.2);
+}
+
 .main-content {
   margin-right: 0 auto;
   margin-left: 15px;

@@ -1,6 +1,6 @@
 package com.gabriel.drive_back.repository;
 
-import com.gabriel.drive_back.domain.File;
+import com.gabriel.drive_back.domain.file.File;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

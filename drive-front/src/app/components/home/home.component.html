@@ -1,6 +1,4 @@
 <app-navbar></app-navbar>
-<div class="background">
-</div>
 <div [ngStyle]="{'display': optionsModalDisplay}" class="addModal">
 
   <input (change)="onFileUpload($event)" type="file" class="file-input" name="file" accept=".pdf, .txt" #fileUpload>
@@ -26,21 +24,51 @@
       <path d="M4 12H20M4 12L8 8M4 12L8 16" stroke="#000000" stroke-width="2" stroke-linecap="round"
         stroke-linejoin="round" />
     </svg>
-    <svg *ngIf="lookingAtFolder" class="add-svg" width="40px" height="40px" viewBox="0 0 24 24" fill="none"
+    <!-- <svg *ngIf="lookingAtFolder" class="add-svg" width="40px" height="40px" viewBox="0 0 24 24" fill="none"
       xmlns="http://www.w3.org/2000/svg">
       <path d="M6 12H18M12 6V18" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-    </svg>
+    </svg> -->
   </div>
   <div class="filters">
     <div class="nome">
       Nome
+      <svg (click)="filterByNameAscending()" class="arrow-up" width="25px" height="20px"
+        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#000000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+      <svg (click)="filterByNameDescending()" class="arrow-down" width="25px" height="20px"
+        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="#000000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
     </div>
     <div class="data">
       Data de criação
+      <svg (click)="filterByDateAscending()" class="arrow-up" width="25px" height="20px"
+        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#000000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+      <svg (click)="filterByDateDescending()" class="arrow-down" width="25px" height="20px"
+        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="#000000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
     </div>
 
     <div class="tamanho">
       Tamanho do arquivo
+      <svg (click)="filterBySizeAscending()" class="arrow-up" width="25px" height="20px"
+        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#000000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
+      <svg (click)="filterBySizeDescending()" class="arrow-down" width="25px" height="20px"
+        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="#000000" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" />
+      </svg>
     </div>
   </div>
   <div class="file">
@@ -48,7 +76,7 @@
     <app-folder [folders$]="folders$" [ngStyle]="{'display': folderDisplay}" (lookingAtFolder)="getFolderEvent($event)"
       (currentFolderId)="setFolderId($event)"></app-folder>
     <app-file [ngStyle]="{'display': folderDisplay}" [files$]="files$"></app-file>
-    <app-folder-files *ngIf="lookingAtFolder" [currentFolderId]="currentFolderId"></app-folder-files>
+    <app-folder-files *ngIf="lookingAtFolder" [folderFiles$]="folderFiles$" [currentFolderId]="currentFolderId"></app-folder-files>
   </div>
 
 </div>

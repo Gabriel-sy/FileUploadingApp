@@ -5,6 +5,7 @@ import { FolderService } from '../../services/folder.service';
 import { FolderClass } from '../folder/Folder';
 import { Subject, takeUntil } from 'rxjs';
 import { SharedService } from '../../services/shared.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   folders$: FolderClass[] = [];
   files$: FileClass[] = [];
+  folderFiles$: FileClass[] = [];
   optionsModalDisplay = 'none';
   lookingAtFolder: boolean = false;
   folderDisplay: string = 'block'
@@ -23,11 +25,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   constructor(private fileService: FileService,
     private folderService: FolderService,
-    private sharedService: SharedService) {
-
-  }
-
-  
+    private sharedService: SharedService) { }
 
   ngOnInit(): void {
     this.fileService.getAllFiles()
@@ -63,8 +61,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.fileService.saveFile(formData)
       .subscribe(() => {
         this.findAllFiles()
-      }
-      );
+      });
   }
 
   onFolderUpload(event: any) {
@@ -84,10 +81,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           folderId = res.id;
           this.saveFilesWithFolderId(files, folderId)
         })
-      // if (!(files[i].webkitRelativePath.split('/').length > 2)) {
-      //   Pegando nome da pasta
-
-      // }
     }
   }
 
@@ -135,11 +128,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (res: FileClass[]) => {
           this.files$ = res
-          for (let i = 0; i < this.files$.length; i++) {
-            //Formatando o tamanho do arquivo.
-            const size: string = this.sharedService.formatBytes(this.files$[i].size as unknown as number);
-            this.files$[i].size = size;
-          }
+          this.formatFileSize()
         }
       })
   }
@@ -149,18 +138,106 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribeSignal))
       .subscribe((res: FolderClass[]) => {
         this.folders$ = res;
-        for (let i = 0; i < this.folders$.length; i++) {
-          //Formatando o tamanho do arquivo.
-          const size: string = this.sharedService.formatBytes(this.folders$[i].size as unknown as number);
-          this.folders$[i].size = size;
-        }
+        this.formatFolderSize()
       });
+  }
+
+  filterByNameAscending() {
+    if (this.currentFolderId != '') {
+      this.folderService.findAllFilesByFolderId(this.currentFolderId)
+        .pipe(takeUntil(this.unsubscribeSignal))
+        .subscribe((res) => {
+          this.folderFiles$ = res;
+          this.folderFiles$.sort((a, b) => a.originalName.localeCompare(b.originalName))
+          this.formatFolderFileSize()
+        })
+    } else if (this.currentFolderId == '') {
+      this.files$.sort((a, b) => a.originalName.localeCompare(b.originalName))
+      this.folders$.sort((a, b) => a.name.localeCompare(b.name))
+    }
+
+  }
+
+  filterByNameDescending() {
+    if (this.currentFolderId != '') {
+      this.folderService.findAllFilesByFolderId(this.currentFolderId)
+        .pipe(takeUntil(this.unsubscribeSignal))
+        .subscribe((res) => {
+          this.folderFiles$ = res;
+          this.folderFiles$.sort((a, b) => b.originalName.localeCompare(a.originalName))
+          this.formatFolderFileSize()
+        })
+    } else if (this.currentFolderId == '') {
+      this.files$.sort((a, b) => b.originalName.localeCompare(a.originalName))
+      this.folders$.sort((a, b) => b.name.localeCompare(a.name))
+    }
+  }
+
+  filterByDateAscending() {
+    if (this.currentFolderId != '') {
+      this.folderService.findAllFilesByFolderId(this.currentFolderId)
+        .pipe(takeUntil(this.unsubscribeSignal))
+        .subscribe((res) => {
+          this.folderFiles$ = res;
+          this.folderFiles$.sort((a, b) => a.createdDate.localeCompare(b.createdDate))
+          this.formatFolderFileSize()
+        })
+    } else if (this.currentFolderId == '') {
+      this.folders$.sort((a, b) => a.createdTime.localeCompare(b.createdTime))
+      this.files$.sort((a, b) => a.createdDate.localeCompare(b.createdDate))
+    }
+  }
+
+  filterByDateDescending() {
+    if (this.currentFolderId != '') {
+      this.folderService.findAllFilesByFolderId(this.currentFolderId)
+        .pipe(takeUntil(this.unsubscribeSignal))
+        .subscribe((res) => {
+          this.folderFiles$ = res;
+          this.folderFiles$.sort((a, b) => b.createdDate.localeCompare(a.createdDate))
+          this.formatFolderFileSize()
+        })
+    } else if (this.currentFolderId == '') {
+      this.folders$.sort((a, b) => b.createdTime.localeCompare(a.createdTime))
+      this.files$.sort((a, b) => b.createdDate.localeCompare(a.createdDate))
+    }
+  }
+
+  filterBySizeAscending() {
+    if (this.currentFolderId != '') {
+      this.folderService.findAllFilesByFolderId(this.currentFolderId)
+        .pipe(takeUntil(this.unsubscribeSignal))
+        .subscribe((res) => {
+          this.folderFiles$ = res;
+          this.folderFiles$.sort((a, b) => +a.size - +b.size)
+          this.formatFolderFileSize()
+          console.log(this.folderFiles$)
+        })
+    } else if (this.currentFolderId == '') {
+      this.folders$.sort((a, b) => a.size.localeCompare(b.size))
+      this.files$.sort((a, b) => a.size.localeCompare(b.size))
+    }
+  }
+
+  filterBySizeDescending() {
+    if (this.currentFolderId != '') {
+      this.folderService.findAllFilesByFolderId(this.currentFolderId)
+        .pipe(takeUntil(this.unsubscribeSignal))
+        .subscribe((res) => {
+          this.folderFiles$ = res;
+          this.folderFiles$.sort((a, b) => +b.size - +a.size)
+          this.formatFolderFileSize()
+        })
+    } else if (this.currentFolderId == '') {
+      this.folders$.sort((a, b) => b.size.localeCompare(a.size))
+      this.files$.sort((a, b) => b.size.localeCompare(a.size))
+    }
   }
 
   closeFolder() {
     this.lookingAtFolder = false;
     this.folderDisplay = 'block';
-
+    this.currentFolderId = '';
   }
 
   openFileModal() {
@@ -170,6 +247,24 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.optionsModalDisplay = 'flex'
     }
 
+  }
+
+  formatFolderFileSize() {
+    this.folderFiles$.forEach(file => {
+      file.size = this.sharedService.formatBytes(file.size as unknown as number)
+    })
+  }
+
+  formatFileSize() {
+    this.files$.forEach(file => {
+      file.size = this.sharedService.formatBytes(file.size as unknown as number)
+    })
+  }
+
+  formatFolderSize() {
+    this.folders$.forEach(folder => {
+      folder.size = this.sharedService.formatBytes(folder.size as unknown as number)
+    })
   }
 
 }

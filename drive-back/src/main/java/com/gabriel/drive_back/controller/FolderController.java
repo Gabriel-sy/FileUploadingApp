@@ -1,18 +1,13 @@
 package com.gabriel.drive_back.controller;
 
-import com.gabriel.drive_back.domain.File;
-import com.gabriel.drive_back.domain.Folder;
-import com.gabriel.drive_back.domain.FolderDTO;
-import com.gabriel.drive_back.domain.FolderSizeDTO;
-import com.gabriel.drive_back.repository.FileRepository;
+import com.gabriel.drive_back.domain.folder.Folder;
+import com.gabriel.drive_back.domain.folder.FolderDTO;
+import com.gabriel.drive_back.domain.folder.FolderSizeDTO;
 import com.gabriel.drive_back.repository.FolderRepository;
-import com.gabriel.drive_back.service.FileService;
 import com.gabriel.drive_back.service.FolderService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @RestController

@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { FileService } from './file.service';
 import { FileClass } from '../components/file/File';
 import { Subscription } from 'rxjs';
+import { FolderService } from './folder.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SharedService {
 
-  constructor(private fileService: FileService) { }
+  constructor(private fileService: FileService, private folderService: FolderService) { }
 
   downloadFile(id: string, name: string) {
     var fileToDownload: FileClass;
@@ -19,7 +20,7 @@ export class SharedService {
         },
         complete: () => getFileToDownloadData.unsubscribe()
       })
-      
+
     if (name.includes(".pdf")) {
       const downloadPdf: Subscription = this.fileService.getFileBytes(id)
         .subscribe({

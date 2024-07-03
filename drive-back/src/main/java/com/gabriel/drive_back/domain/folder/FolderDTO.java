@@ -1,8 +1,6 @@
-package com.gabriel.drive_back.domain;
+package com.gabriel.drive_back.domain.folder;
 
 import jakarta.validation.constraints.NotEmpty;
-
-import java.util.List;
 
 public record FolderDTO(@NotEmpty String name) {
 }

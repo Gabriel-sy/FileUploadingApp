@@ -5,6 +5,7 @@ import com.gabriel.drive_back.domain.folder.FolderDTO;
 import com.gabriel.drive_back.domain.folder.FolderSizeDTO;
 import com.gabriel.drive_back.repository.FolderRepository;
 import com.gabriel.drive_back.service.FolderService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,16 +22,16 @@ public class FolderController {
         this.folderService = folderService;
     }
 
-    @PostMapping(path = "/create")
-    public ResponseEntity<Folder> saveFolder(@RequestBody FolderDTO folderDTO){
-        Folder savedFolder = folderService.saveNewFolder(folderDTO);
+    @PostMapping(path = "/create/{userId}")
+    public ResponseEntity<Folder> saveFolder(@RequestBody FolderDTO folderDTO, @PathVariable String userId){
+        Folder savedFolder = folderService.saveNewFolder(folderDTO, userId);
 
         return ResponseEntity.ok(savedFolder);
     }
 
-    @GetMapping(path = "/findall")
-    public ResponseEntity<List<Folder>> findAllFolders(){
-        return ResponseEntity.ok(folderRepository.findAll());
+    @GetMapping(path = "/findall/{userId}")
+    public ResponseEntity<List<Folder>> findAllFolders(@PathVariable String userId){
+        return ResponseEntity.ok(folderService.findFolderByUserId(userId));
     }
 
     @GetMapping(path = "/find/{id}")

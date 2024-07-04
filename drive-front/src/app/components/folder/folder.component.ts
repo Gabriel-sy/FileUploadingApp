@@ -4,7 +4,7 @@ import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
 import { FolderClass } from './Folder';
 import { SharedService } from '../../services/shared.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, map, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-folder',
@@ -17,19 +17,17 @@ export class FolderComponent implements OnInit, OnDestroy {
   modalDisplay: string = 'none'
   txtFileContent: string = '';
   txtFileTitle: string = '';
-  @Input() folders$: FolderClass[] = [];
+  // @Input() folders$: FolderClass[] = [];
+  @Input() folders$: Observable<FolderClass[]> = new Observable<FolderClass[]>();
   @Output() lookingAtFolder = new EventEmitter<boolean>()
   @Output() currentFolderId = new EventEmitter<string>()
+  @Input() userId: string = ''
   unsubscribeSignal: Subject<void> = new Subject();
 
   constructor(private fileService: FileService, private folderService: FolderService, private sharedService: SharedService) { }
 
   ngOnInit(): void {
-    for (let i = 0; i < this.folders$.length; i++) {
-      //Formatando o tamanho da pasta.
-      const size: string = this.sharedService.formatBytes(this.folders$[i].size as unknown as number);
-      this.folders$[i].size = size;
-    }
+    this.formatFolderSize()
   }
 
   ngOnDestroy(): void {
@@ -65,21 +63,19 @@ export class FolderComponent implements OnInit, OnDestroy {
       .subscribe({
         next: () => this.deletefilesByFolderid(folderId)
       })
+
   }
 
-  deletefilesByFolderid(folderId: string){
+  deletefilesByFolderid(folderId: string) {
     this.fileService.deleteFilesByFolderId(folderId)
-    .pipe(takeUntil(this.unsubscribeSignal))
-    .subscribe({
-      complete: () => this.findAllFolders()
-    })
+      .pipe(takeUntil(this.unsubscribeSignal))
+      .subscribe()
+    this.findAllFolders()
   }
 
   findAllFolders() {
-    this.folderService.findAllFolders()
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: FolderClass[]) =>
-        this.folders$ = res)
+    this.folders$ = this.folderService.findAllFolders(this.userId)
+    this.formatFolderSize()
   }
 
   openFolder() {
@@ -94,6 +90,14 @@ export class FolderComponent implements OnInit, OnDestroy {
     event.stopPropagation();
   }
 
+  formatFolderSize() {
+    this.folders$ = this.folders$.pipe(
+      map(folders => folders.map(folder => {
+        folder.size = this.sharedService.formatBytes(folder.size as unknown as number);
+        return folder;
+      }))
+    );
+  }
   closeTxtModal() {
     this.txtModalDisplay = 'none';
   }

@@ -1,8 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable, OnInit, PLATFORM_ID, inject } from '@angular/core';
-import { Jwt } from './Jwt';
+import { Jwt } from '../components/Jwt';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { User } from '../components/User';
 
 @Injectable({
   providedIn: 'root'
@@ -29,9 +30,8 @@ export class AuthService {
   }
 
   setSession(jwt: string) {
-    const expirationTime = Date.now() + 1000 * 60;
+    const expirationTime = Date.now() + 1000 * 60 * 60 * 60;
     if (isPlatformBrowser(this.platformId)) {
-      localStorage.clear();
       localStorage.setItem('jwt', jwt);
       localStorage.setItem('expireDate', expirationTime.toString())
     }
@@ -69,5 +69,12 @@ export class AuthService {
     } else {
       return null;
     }
+  }
+
+  findUserByToken(jwt: string){
+    let header = new HttpHeaders();
+    header = header.set('Content-Type', 'application/json')
+    var json = JSON.stringify({ jwt: jwt })
+    return this.http.post<User>('http://localhost:8080/auth/jwt', json, {headers: header});
   }
 }

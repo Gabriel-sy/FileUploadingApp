@@ -20,6 +20,8 @@
       <span *ngIf="loginData.get('password')?.hasError('required') && isSubmitted">Esse campo não pode estar
         vazio</span>
 
+        <span *ngIf="isCredentialsInvalid">Login ou senha inválidos.</span>
+
     </div>
     <button type="submit">Entrar</button>
   </form>

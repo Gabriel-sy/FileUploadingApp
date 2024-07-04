@@ -1,16 +1,12 @@
 package com.gabriel.drive_back.controller;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.gabriel.drive_back.domain.JwtDTO;
+import com.gabriel.drive_back.domain.user.User;
 import com.gabriel.drive_back.domain.user.UserDTO;
 import com.gabriel.drive_back.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("auth")
@@ -32,5 +28,11 @@ public class AuthController {
         String loginCookie = userService.login(userDTO);
         JwtDTO jwt = new JwtDTO(loginCookie);
         return ResponseEntity.ok(jwt);
+    }
+
+    @PostMapping(path = "/jwt")
+    public ResponseEntity<User> findUserByToken(@RequestBody JwtDTO jwt){
+            User userByToken = userService.findUserByToken(jwt.jwt());
+            return ResponseEntity.ok(userByToken);
     }
 }

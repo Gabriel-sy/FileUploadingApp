@@ -1,7 +1,8 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FileClass } from '../components/file/File';
 import { FolderClass } from '../components/folder/Folder';
+import { delay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -22,16 +23,16 @@ export class FileService {
     return this.http.get('http://localhost:8080/file/get/bytes/' + id, { responseType: 'text' })
   }
 
-  saveFile(formData: FormData) {
-    return this.http.post('http://localhost:8080/file/upload', formData, { observe: 'response' });
+  saveFile(formData: FormData, userId: string) {
+    return this.http.post('http://localhost:8080/file/upload/' + userId, formData, { observe: 'response' });
   }
 
   saveFolderFile(formData: FormData){
     return this.http.post<FileClass>('http://localhost:8080/file/upload', formData);
   }
 
-  getAllFiles() {
-    return this.http.get<FileClass[]>('http://localhost:8080/file/get/all')
+  getAllFiles(userId: string) {
+    return this.http.get<FileClass[]>('http://localhost:8080/file/get/all/' + userId).pipe(delay(500))
   }
 
   saveFolderId(id: number, folderId: number){

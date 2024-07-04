@@ -24,18 +24,17 @@ public class File {
     @Lob
     private byte[] fileBytes;
     private Long folderId;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User userId;
 
-    public File(String originalName, Long size, String type, byte[] fileBytes, String createdDate, String name) {
-        this.name = name;
-        this.createdDate = createdDate;
+    public File(String originalName, String name, Long size, String createdDate, String type, byte[] fileBytes, User userId) {
         this.originalName = originalName;
+        this.name = name;
         this.size = size;
+        this.createdDate = createdDate;
         this.type = type;
         this.fileBytes = fileBytes;
-
+        this.userId = userId;
     }
 }

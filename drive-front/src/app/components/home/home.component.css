@@ -148,3 +148,9 @@ button:active {
   align-items: center;
   flex: 1;
 }
+
+.loading {
+  display: flex;
+  margin: 0 auto;
+  margin-top: 25%;
+}

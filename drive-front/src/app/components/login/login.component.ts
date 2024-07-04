@@ -1,7 +1,10 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Jwt } from '../../services/Jwt';
+import { Jwt } from '../Jwt';
+import { Router } from '@angular/router';
+import { catchError } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 @Component({
@@ -16,8 +19,9 @@ export class LoginComponent {
   })
 
   isSubmitted: boolean = false;
+  isCredentialsInvalid: boolean = false;
 
-  constructor(private formBuilder: FormBuilder, private authService: AuthService) {
+  constructor(private formBuilder: FormBuilder, private authService: AuthService, private router: Router) {
 
   }
 
@@ -26,9 +30,13 @@ export class LoginComponent {
       var values = this.loginData.value;
       if (values.login && values.password) {
         this.authService.login(values.login, values.password)
-        .subscribe((res: Jwt) => {
-          this.authService.setSession(res.jwt)
-        });
+          .subscribe({
+            next: (res) => {this.authService.setSession(res.jwt)
+            },
+            error: () => {this.isCredentialsInvalid = true},
+            complete: () => this.router.navigateByUrl('home')
+          }
+          );
       }
     }
     this.isSubmitted = true;
@@ -48,5 +56,5 @@ export class LoginComponent {
     return false;
   }
 
-  
+
 }

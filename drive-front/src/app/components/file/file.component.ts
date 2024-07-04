@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FileClass } from './File';
 import { FileService } from '../../services/file.service';
 import { SharedService } from '../../services/shared.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, map, takeUntil, tap } from 'rxjs';
 
 @Component({
   selector: 'app-file',
@@ -16,17 +16,15 @@ export class FileComponent implements OnInit, OnDestroy {
   modalDisplay: string = 'none'
   txtFileContent: string = '';
   txtFileTitle: string = '';
-  @Input() files$: FileClass[] = []
+  // @Input() files$: FileClass[] = []
+  @Input() files$: Observable<FileClass[]> = new Observable<FileClass[]>();
+  @Input() userId: string = '';
   unsubscribeSignal: Subject<void> = new Subject();
 
   constructor(private fileService: FileService, private sharedService: SharedService) { }
 
   ngOnInit(): void {
-    for (let i = 0; i < this.files$.length; i++) {
-      //Formatando o tamanho do arquivo.
-      const size: string = this.sharedService.formatBytes(this.files$[i].size as unknown as number);
-      this.files$[i].size = size;
-    }
+    this.formatFileSize()
   }
 
   ngOnDestroy(): void {
@@ -65,10 +63,7 @@ export class FileComponent implements OnInit, OnDestroy {
   }
 
   findAllFiles() {
-    this.fileService.getAllFiles()
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: FileClass[]) =>
-        this.files$ = res)
+    this.files$ = this.fileService.getAllFiles(this.userId)
   }
 
   stopPropagation(event: Event) {
@@ -90,5 +85,13 @@ export class FileComponent implements OnInit, OnDestroy {
     this.txtModalDisplay = 'none'
   }
 
-  
+  formatFileSize() {
+    this.files$ = this.files$.pipe(
+      map(files => files.map(file => {
+        file.size = this.sharedService.formatBytes(file.size as unknown as number);
+        return file;
+      }))
+    );
+  }
+
 }

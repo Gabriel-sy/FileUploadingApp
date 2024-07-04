@@ -7,7 +7,7 @@ import { AuthService } from './auth.service';
 @Injectable({
   providedIn: 'root'
 })
-export class ErrorInterceptorService implements HttpInterceptor{
+export class ErrorInterceptorService{
   constructor(private router: Router, private authService: AuthService){}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     return next.handle(req).pipe(catchError(err => {
@@ -16,4 +16,5 @@ export class ErrorInterceptorService implements HttpInterceptor{
       }
       return throwError(()=> err);
     }))
-}}
+}
+}

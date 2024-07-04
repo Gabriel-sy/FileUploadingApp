@@ -19,17 +19,13 @@ public class Folder {
     private String name;
     private String createdTime;
     private int size;
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id")
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User userId;
 
-    public Folder(String name) {
-        this.name = name;
-    }
-
-    public Folder(String name, String createdTime) {
+    public Folder(String name, String createdTime, User userId) {
         this.name = name;
         this.createdTime = createdTime;
+        this.userId = userId;
     }
 }

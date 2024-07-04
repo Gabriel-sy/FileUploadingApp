@@ -4,6 +4,7 @@ import com.gabriel.drive_back.domain.file.File;
 import com.gabriel.drive_back.domain.file.FileDTO;
 import com.gabriel.drive_back.repository.FileRepository;
 import com.gabriel.drive_back.service.FileService;
+import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,9 +23,9 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @PostMapping(path = "/upload")
-    public ResponseEntity<File> saveFileApi(@RequestParam("file") MultipartFile file) throws IOException {
-        File newFile = fileService.saveFile(file);
+    @PostMapping(path = "/upload/{userId}")
+    public ResponseEntity<File> saveFileApi(@RequestParam("file") MultipartFile file, @PathVariable String userId) throws IOException {
+        File newFile = fileService.saveFile(file, userId);
 
         return ResponseEntity.ok(newFile);
     }
@@ -35,7 +36,6 @@ public class FileController {
 
         return ResponseEntity.ok().build();
     }
-
 
     @GetMapping(path = "/get/bytes/{id}")
     public ResponseEntity<byte[]> getBytes(@PathVariable Long id){
@@ -51,9 +51,9 @@ public class FileController {
         return ResponseEntity.ok(file);
     }
 
-    @GetMapping(path = "/get/all")
-    public ResponseEntity<List<File>> findAllFiles(){
-        return ResponseEntity.ok(fileRepository.findAll());
+    @GetMapping(path = "/get/all/{userId}")
+    public ResponseEntity<List<File>> findAllFiles(@PathVariable String userId){
+        return ResponseEntity.ok(fileService.findAllByUserId(userId));
     }
 
     @GetMapping(path = "/get/folderid/{id}")

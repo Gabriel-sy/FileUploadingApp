@@ -32,26 +32,26 @@
   <div class="filters">
     <div class="nome">
       Nome
-      <svg (click)="filterByNameAscending()" class="arrow-up" width="25px" height="20px"
-        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg (click)="filterByNameAscending()" class="arrow-up" width="25px" height="20px" viewBox="0 0 24 24" fill="none"
+        xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#000000" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" />
       </svg>
-      <svg (click)="filterByNameDescending()" class="arrow-down" width="25px" height="20px"
-        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg (click)="filterByNameDescending()" class="arrow-down" width="25px" height="20px" viewBox="0 0 24 24"
+        fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="#000000" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" />
       </svg>
     </div>
     <div class="data">
       Data de criação
-      <svg (click)="filterByDateAscending()" class="arrow-up" width="25px" height="20px"
-        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg (click)="filterByDateAscending()" class="arrow-up" width="25px" height="20px" viewBox="0 0 24 24" fill="none"
+        xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#000000" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" />
       </svg>
-      <svg (click)="filterByDateDescending()" class="arrow-down" width="25px" height="20px"
-        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg (click)="filterByDateDescending()" class="arrow-down" width="25px" height="20px" viewBox="0 0 24 24"
+        fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="#000000" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" />
       </svg>
@@ -59,24 +59,24 @@
 
     <div class="tamanho">
       Tamanho do arquivo
-      <svg (click)="filterBySizeAscending()" class="arrow-up" width="25px" height="20px"
-        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg (click)="filterBySizeAscending()" class="arrow-up" width="25px" height="20px" viewBox="0 0 24 24" fill="none"
+        xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 5L6 11M12 5L18 11" stroke="#000000" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" />
       </svg>
-      <svg (click)="filterBySizeDescending()" class="arrow-down" width="25px" height="20px"
-        viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg (click)="filterBySizeDescending()" class="arrow-down" width="25px" height="20px" viewBox="0 0 24 24"
+        fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M12 5V19M12 19L6 13M12 19L18 13" stroke="#000000" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round" />
       </svg>
     </div>
   </div>
   <div class="file">
-
-    <app-folder [folders$]="folders$" [ngStyle]="{'display': folderDisplay}" (lookingAtFolder)="getFolderEvent($event)"
+    <app-folder [userId]="userId" [folders$]="folders$" [ngStyle]="{'display': folderDisplay}" (lookingAtFolder)="getFolderEvent($event)"
       (currentFolderId)="setFolderId($event)"></app-folder>
-    <app-file [ngStyle]="{'display': folderDisplay}" [files$]="files$"></app-file>
-    <app-folder-files *ngIf="lookingAtFolder" [folderFiles$]="folderFiles$" [currentFolderId]="currentFolderId"></app-folder-files>
+    <app-file [userId]="userId" [ngStyle]="{'display': folderDisplay}" [files$]="files$"></app-file>
+    <app-folder-files *ngIf="lookingAtFolder" [folderFiles$]="folderFiles$"
+      [currentFolderId]="currentFolderId"></app-folder-files>
   </div>
 
 </div>

@@ -9,7 +9,7 @@
   <p>{{ txtFileContent }}</p>
 </div>
 
-<div class="main" *ngFor="let folder of folders$">
+<div class="main" *ngFor="let folder of folders$ | async">
   <div class="filters" (click)="openFolder()" (click)="setCurrentFolder(folder.id)">
     <div class="file-svg">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="30px" height="30px">

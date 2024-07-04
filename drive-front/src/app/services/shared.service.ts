@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { FileService } from './file.service';
 import { FileClass } from '../components/file/File';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription, map } from 'rxjs';
 import { FolderService } from './folder.service';
+import { FolderClass } from '../components/folder/Folder';
 
 @Injectable({
   providedIn: 'root'
@@ -74,6 +75,114 @@ export class SharedService {
           complete: () => open.unsubscribe()
         }
       )
+  }
+
+  filterFolderFilesByNameAsc(folderFiles$: Observable<FileClass[]>){
+    return folderFiles$.pipe(map((folderFiles) => {
+      folderFiles.sort((a, b) => {
+        return a.originalName.localeCompare(b.originalName);
+      });
+      return folderFiles;
+    }))
+  }
+
+  filterFolderFilesByNameDesc(folderFiles$: Observable<FileClass[]>){
+    return folderFiles$.pipe(map((folderFiles) => {
+      folderFiles.sort((a, b) => {
+        return b.originalName.localeCompare(a.originalName);
+      });
+      return folderFiles;
+    }))
+  }
+  
+  filterFolderFilesByDateAsc(folderFiles$: Observable<FileClass[]>){
+    return folderFiles$.pipe(map((folderFiles) => {
+      folderFiles.sort((a, b) => {
+        return a.createdDate.localeCompare(b.createdDate);
+      });
+      return folderFiles;
+    }))
+  }
+
+  filterFolderFilesByDateDesc(folderFiles$: Observable<FileClass[]>){
+    return folderFiles$.pipe(map((folderFiles) => {
+      folderFiles.sort((a, b) => {
+        return b.createdDate.localeCompare(a.createdDate);
+      });
+      return folderFiles;
+    }))
+  }
+
+  filterFilesByNameAsc(files$: Observable<FileClass[]>){
+    return files$.pipe(map((files) => {
+      files.sort((a, b) => {
+        return a.originalName.localeCompare(b.originalName);
+      });
+      return files;
+    }))
+  }
+
+  filterFilesByNameDesc(files$: Observable<FileClass[]>){
+    return files$.pipe(map((files) => {
+      files.sort((a, b) => {
+        return b.originalName.localeCompare(a.originalName);
+      });
+      return files;
+    }))
+  }
+
+  filterFilesByDateAsc(files$: Observable<FileClass[]>){
+    return files$.pipe(map((files) => {
+      files.sort((a, b) => {
+        return a.createdDate.localeCompare(b.createdDate);
+      });
+      return files;
+    }))
+  }
+
+  filterFilesByDateDesc(files$: Observable<FileClass[]>){
+    return files$.pipe(map((files) => {
+      files.sort((a, b) => {
+        return b.createdDate.localeCompare(a.createdDate);
+      });
+      return files;
+    }))
+  }
+
+  filterFoldersByNameDesc(folders$: Observable<FolderClass[]>){
+    return folders$.pipe(map((folders) => {
+      folders.sort((a, b) => {
+        return b.name.localeCompare(a.name);
+      });
+      return folders;
+    }))
+  }
+
+  filterFoldersByNameAsc(folders$: Observable<FolderClass[]>){
+    return folders$.pipe(map((folders) => {
+      folders.sort((a, b) => {
+        return a.name.localeCompare(b.name);
+      });
+      return folders;
+    }))
+  }
+
+  filterFoldersByDateAsc(folders$: Observable<FolderClass[]>){
+    return folders$.pipe(map((folders) => {
+      folders.sort((a, b) => {
+        return a.createdTime.localeCompare(b.createdTime);
+      });
+      return folders;
+    }))
+  }
+
+  filterFoldersByDateDesc(folders$: Observable<FolderClass[]>){
+    return folders$.pipe(map((folders) => {
+      folders.sort((a, b) => {
+        return b.createdTime.localeCompare(a.createdTime);
+      });
+      return folders;
+    }))
   }
 
 }

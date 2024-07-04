@@ -1,11 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
 import { FileService } from '../../services/file.service';
 import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
 import { FolderClass } from '../folder/Folder';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, combineLatest, forkJoin, map, takeUntil } from 'rxjs';
 import { SharedService } from '../../services/shared.service';
 import { AuthService } from '../../services/auth.service';
+import { isPlatformBrowser } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -14,29 +15,46 @@ import { AuthService } from '../../services/auth.service';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  folders$: FolderClass[] = [];
-  files$: FileClass[] = [];
-  folderFiles$: FileClass[] = [];
+  // folders$: FolderClass[] = [];
+  folders$: Observable<FolderClass[]> = new Observable<FolderClass[]>();
+  // files$: FileClass[] = [];
+  files$: Observable<FileClass[]> = new Observable<FileClass[]>();
+  folderFiles$: Observable<FileClass[]> = new Observable<FileClass[]>();
   optionsModalDisplay = 'none';
   lookingAtFolder: boolean = false;
   folderDisplay: string = 'block'
   currentFolderId: string = ''
   unsubscribeSignal: Subject<void> = new Subject();
+  userLogin: string = '';
+  userId: string = '';
+  private readonly platformId = inject(PLATFORM_ID)
 
   constructor(private fileService: FileService,
     private folderService: FolderService,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService,
+    private authService: AuthService) { }
 
   ngOnInit(): void {
-    this.fileService.getAllFiles()
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: FileClass[]) =>
-        this.files$ = res)
+    if (isPlatformBrowser(this.platformId)) {
+      var jwt = localStorage.getItem("jwt");
+      if (jwt) {
+        this.authService.findUserByToken(jwt).subscribe({
+          next: (res) => {
+            this.userId = res.id;
+            this.userLogin = res.login;
+          },
+          complete: () => {
+            this.findAllFiles()
+            this.findAllFolders()
+          }
+        });
+      } else {
+        this.authService.findUserByToken("")
+          .pipe(takeUntil(this.unsubscribeSignal))
+          .subscribe()
+      }
+    }
 
-    this.folderService.findAllFolders()
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: FolderClass[]) =>
-        this.folders$ = res)
   }
 
   ngOnDestroy(): void {
@@ -58,10 +76,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     const formData = new FormData();
     formData.append("file", file, file.name);
 
-    this.fileService.saveFile(formData)
-      .subscribe(() => {
-        this.findAllFiles()
-      });
+    this.fileService.saveFile(formData, this.userId)
+      .pipe(takeUntil(this.unsubscribeSignal))
+      .subscribe()
+    this.findAllFiles();
   }
 
   onFolderUpload(event: any) {
@@ -75,7 +93,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       var removeAfter = folderUrl.indexOf('/')
       folderName = folderUrl.substring(0, removeAfter);
 
-      this.folderService.saveFolder(folderName)
+      this.folderService.saveFolder(folderName, this.userId)
         .pipe(takeUntil(this.unsubscribeSignal))
         .subscribe((res: FolderClass) => {
           folderId = res.id;
@@ -98,7 +116,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   saveFileAndInsertFolderId(formData: FormData, folderId: string) {
-    this.fileService.saveFile(formData)
+    this.fileService.saveFile(formData, this.userId)
       .pipe(takeUntil(this.unsubscribeSignal))
       .subscribe({
         next: (res) => {
@@ -123,115 +141,130 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   findAllFiles() {
-    this.fileService.getAllFiles()
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe({
-        next: (res: FileClass[]) => {
-          this.files$ = res
-          this.formatFileSize()
-        }
-      })
+    this.files$ = this.fileService.getAllFiles(this.userId);
+    this.formatFileSize()
   }
 
   findAllFolders() {
-    this.folderService.findAllFolders()
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: FolderClass[]) => {
-        this.folders$ = res;
-        this.formatFolderSize()
-      });
+    this.folders$ = this.folderService.findAllFolders(this.userId)
+    this.formatFolderSize()
   }
 
   filterByNameAscending() {
     if (this.currentFolderId != '') {
-      this.folderService.findAllFilesByFolderId(this.currentFolderId)
-        .pipe(takeUntil(this.unsubscribeSignal))
-        .subscribe((res) => {
-          this.folderFiles$ = res;
-          this.folderFiles$.sort((a, b) => a.originalName.localeCompare(b.originalName))
-          this.formatFolderFileSize()
-        })
+      this.folderFiles$ = this.sharedService.filterFolderFilesByNameAsc(this.folderFiles$);
     } else if (this.currentFolderId == '') {
-      this.files$.sort((a, b) => a.originalName.localeCompare(b.originalName))
-      this.folders$.sort((a, b) => a.name.localeCompare(b.name))
+      this.files$ = this.sharedService.filterFilesByNameAsc(this.files$);
+      this.folders$ = this.sharedService.filterFoldersByNameAsc(this.folders$);
     }
 
   }
 
   filterByNameDescending() {
     if (this.currentFolderId != '') {
-      this.folderService.findAllFilesByFolderId(this.currentFolderId)
-        .pipe(takeUntil(this.unsubscribeSignal))
-        .subscribe((res) => {
-          this.folderFiles$ = res;
-          this.folderFiles$.sort((a, b) => b.originalName.localeCompare(a.originalName))
-          this.formatFolderFileSize()
-        })
+      this.folderFiles$ = this.sharedService.filterFolderFilesByNameDesc(this.folderFiles$)
     } else if (this.currentFolderId == '') {
-      this.files$.sort((a, b) => b.originalName.localeCompare(a.originalName))
-      this.folders$.sort((a, b) => b.name.localeCompare(a.name))
+      this.files$ = this.sharedService.filterFilesByNameDesc(this.files$);
+      this.folders$ = this.sharedService.filterFoldersByNameDesc(this.folders$);
     }
   }
 
   filterByDateAscending() {
     if (this.currentFolderId != '') {
-      this.folderService.findAllFilesByFolderId(this.currentFolderId)
-        .pipe(takeUntil(this.unsubscribeSignal))
-        .subscribe((res) => {
-          this.folderFiles$ = res;
-          this.folderFiles$.sort((a, b) => a.createdDate.localeCompare(b.createdDate))
-          this.formatFolderFileSize()
-        })
+      this.folderFiles$ = this.sharedService.filterFolderFilesByDateAsc(this.folderFiles$)
     } else if (this.currentFolderId == '') {
-      this.folders$.sort((a, b) => a.createdTime.localeCompare(b.createdTime))
-      this.files$.sort((a, b) => a.createdDate.localeCompare(b.createdDate))
+      this.files$ = this.sharedService.filterFilesByDateAsc(this.files$);
+      this.folders$ = this.sharedService.filterFoldersByDateAsc(this.folders$);
     }
   }
 
   filterByDateDescending() {
     if (this.currentFolderId != '') {
-      this.folderService.findAllFilesByFolderId(this.currentFolderId)
-        .pipe(takeUntil(this.unsubscribeSignal))
-        .subscribe((res) => {
-          this.folderFiles$ = res;
-          this.folderFiles$.sort((a, b) => b.createdDate.localeCompare(a.createdDate))
-          this.formatFolderFileSize()
-        })
+      this.folderFiles$ = this.sharedService.filterFolderFilesByDateDesc(this.folderFiles$)
     } else if (this.currentFolderId == '') {
-      this.folders$.sort((a, b) => b.createdTime.localeCompare(a.createdTime))
-      this.files$.sort((a, b) => b.createdDate.localeCompare(a.createdDate))
+      this.files$ = this.sharedService.filterFilesByDateDesc(this.files$);
+      this.folders$ = this.sharedService.filterFoldersByDateDesc(this.folders$);
     }
   }
 
   filterBySizeAscending() {
     if (this.currentFolderId != '') {
-      this.folderService.findAllFilesByFolderId(this.currentFolderId)
-        .pipe(takeUntil(this.unsubscribeSignal))
-        .subscribe((res) => {
-          this.folderFiles$ = res;
-          this.folderFiles$.sort((a, b) => +a.size - +b.size)
-          this.formatFolderFileSize()
-          console.log(this.folderFiles$)
-        })
+      this.filterFolderFilesBySizeAsc();
     } else if (this.currentFolderId == '') {
-      this.folders$.sort((a, b) => a.size.localeCompare(b.size))
-      this.files$.sort((a, b) => a.size.localeCompare(b.size))
+      this.filterFilesAndFoldersBySizeAsc();
     }
   }
 
   filterBySizeDescending() {
     if (this.currentFolderId != '') {
-      this.folderService.findAllFilesByFolderId(this.currentFolderId)
-        .pipe(takeUntil(this.unsubscribeSignal))
-        .subscribe((res) => {
-          this.folderFiles$ = res;
-          this.folderFiles$.sort((a, b) => +b.size - +a.size)
-          this.formatFolderFileSize()
-        })
+      this.filterFolderFilesBySizeDesc();
     } else if (this.currentFolderId == '') {
-      this.folders$.sort((a, b) => b.size.localeCompare(a.size))
-      this.files$.sort((a, b) => b.size.localeCompare(a.size))
+      this.filterFilesAndFoldersBySizeDesc();
     }
+  }
+
+  filterFolderFilesBySizeAsc() {
+    this.folderFiles$ = this.folderService.findAllFilesByFolderId(this.currentFolderId);
+    this.folderFiles$ = this.folderFiles$.pipe(map((folderFiles) => {
+      folderFiles.sort((a, b) => {
+        return +a.size < +b.size ? -1 : 1;
+      });
+      return folderFiles;
+    }));
+    this.formatFolderFileSize()
+  }
+
+  filterFolderFilesBySizeDesc() {
+    this.folderFiles$ = this.folderService.findAllFilesByFolderId(this.currentFolderId);
+    this.folderFiles$ = this.folderFiles$.pipe(map((folderFiles) => {
+      folderFiles.sort((a, b) => {
+        return +b.size < +a.size ? -1 : 1;
+      });
+      return folderFiles;
+    }));
+    this.formatFolderFileSize();
+  }
+
+  filterFilesAndFoldersBySizeAsc() {
+    this.files$ = this.fileService.getAllFiles(this.userId)
+    this.files$ = this.files$.pipe(map((files) => {
+      files.sort((a, b) => {
+        return +a.size < +b.size ? -1 : 1;
+      });
+      return files;
+    }))
+
+    this.folders$ = this.folderService.findAllFolders(this.userId)
+    this.folders$ = this.folders$.pipe(map((folders) => {
+      folders.sort((a, b) => {
+        return +a.size < +b.size ? -1 : 1;
+      });
+      return folders;
+    }))
+
+    this.formatFileSize()
+    this.formatFolderSize()
+  }
+
+  filterFilesAndFoldersBySizeDesc() {
+    this.files$ = this.fileService.getAllFiles(this.userId)
+    this.files$ = this.files$.pipe(map((files) => {
+      files.sort((a, b) => {
+        return +b.size < +a.size ? -1 : 1;
+      });
+      return files;
+    }))
+
+    this.folders$ = this.folderService.findAllFolders(this.userId)
+    this.folders$ = this.folders$.pipe(map((folders) => {
+      folders.sort((a, b) => {
+        return +b.size < +a.size ? -1 : 1;
+      });
+      return folders;
+    }))
+
+    this.formatFileSize()
+    this.formatFolderSize()
   }
 
   closeFolder() {
@@ -246,25 +279,34 @@ export class HomeComponent implements OnInit, OnDestroy {
     } else {
       this.optionsModalDisplay = 'flex'
     }
-
   }
 
   formatFolderFileSize() {
-    this.folderFiles$.forEach(file => {
-      file.size = this.sharedService.formatBytes(file.size as unknown as number)
-    })
+    this.folderFiles$ = this.folderFiles$.pipe(
+      map(folderFiles => folderFiles.map(folderFiles => {
+        folderFiles.size = this.sharedService.formatBytes(folderFiles.size as unknown as number);
+        return folderFiles;
+      }))
+    );
   }
 
   formatFileSize() {
-    this.files$.forEach(file => {
-      file.size = this.sharedService.formatBytes(file.size as unknown as number)
-    })
+    this.files$ = this.files$.pipe(
+      map(files => files.map(file => {
+        file.size = this.sharedService.formatBytes(file.size as unknown as number);
+        return file;
+      }))
+    );
   }
 
   formatFolderSize() {
-    this.folders$.forEach(folder => {
-      folder.size = this.sharedService.formatBytes(folder.size as unknown as number)
-    })
+    this.folders$ = this.folders$.pipe(
+      map(folders => folders.map(folder => {
+        folder.size = this.sharedService.formatBytes(folder.size as unknown as number);
+        console.log(folder.size)
+        return folder;
+      }))
+    );
   }
 
 }

@@ -2,10 +2,13 @@ package com.gabriel.drive_back.service;
 
 import com.gabriel.drive_back.domain.user.User;
 import com.gabriel.drive_back.domain.user.UserDTO;
+import com.gabriel.drive_back.exception.UserNotFoundException;
 import com.gabriel.drive_back.repository.UserRepository;
-import jakarta.servlet.http.Cookie;
+import jakarta.transaction.Transactional;
+import org.springframework.http.converter.HttpMessageNotWritableException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -35,10 +38,18 @@ public class UserService {
         var authenticate = authenticationManager.authenticate(userNamePasswordWrapper);
 
         String token = tokenService.generateToken((User) authenticate.getPrincipal());
-//        Cookie cookie = new Cookie("jwt", token);
-//        cookie.setPath("/");
-//        cookie.setMaxAge(300);
-//        cookie.setHttpOnly(true);
         return token;
+    }
+
+    @Transactional
+    public User findUserByToken(String jwt) {
+        String login = tokenService.validateToken(jwt);
+        UserDetails byLogin = userRepository.findByLogin(login);
+        return (User) byLogin;
+    }
+
+    @Transactional
+    public User findUserById(Long id){
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("ID inválido"));
     }
 }

@@ -14,6 +14,10 @@ import { FolderComponent } from './components/folder/folder.component';
 import { FolderFilesComponent } from './components/folder-files/folder-files.component';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { ErrorInterceptorService } from './services/error-interceptor.service';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { LoadingComponent } from './components/loading/loading.component';
 
 @NgModule({
   declarations: [
@@ -24,18 +28,22 @@ import { ErrorInterceptorService } from './services/error-interceptor.service';
     HomeComponent,
     FileComponent,
     FolderComponent,
-    FolderFilesComponent
+    FolderFilesComponent,
+    LoadingComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    ProgressSpinnerModule,
+    MatProgressSpinnerModule
   ],
   providers: [
     provideClientHydration(),
     provideHttpClient(withInterceptorsFromDi(), withFetch()),
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true }
+    { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true },
+    provideAnimationsAsync(),
   ],
   bootstrap: [AppComponent]
 })

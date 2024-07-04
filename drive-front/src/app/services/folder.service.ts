@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { FolderClass } from '../components/folder/Folder';
 import { FileClass } from '../components/file/File';
+import { delay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -10,15 +11,15 @@ export class FolderService {
 
   constructor(private http: HttpClient) { }
 
-  saveFolder(folderName: string) {
+  saveFolder(folderName: string, userId: string) {
     let header = new HttpHeaders();
     header = header.set('Content-Type', 'application/json; charset=utf-8')
     var json = JSON.stringify({ name: folderName })
-    return this.http.post<FolderClass>('http://localhost:8080/folder/create', json, { headers: header })
+    return this.http.post<FolderClass>('http://localhost:8080/folder/create/' + userId, json, { headers: header })
   }
 
-  findAllFolders() {
-    return this.http.get<FolderClass[]>('http://localhost:8080/folder/findall')
+  findAllFolders(userId: string) {
+    return this.http.get<FolderClass[]>('http://localhost:8080/folder/findall/' + userId).pipe(delay(500))
   }
 
   findAllFilesByFolderId(id: string) {

@@ -30,10 +30,10 @@ public class User implements UserDetails {
     private String login;
     @NotEmpty
     private String password;
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private Set<Folder> folders = new HashSet<>();
-    @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL)
-    private Set<File> files = new HashSet<>();
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userId", cascade = CascadeType.ALL)
+//    private Set<Folder> folders = new HashSet<>();
+//    @OneToMany(fetch = FetchType.EAGER ,mappedBy = "userId", cascade = CascadeType.ALL)
+//    private Set<File> files = new HashSet<>();
 
     public User(String login, String password) {
         this.login = login;

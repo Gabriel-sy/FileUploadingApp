@@ -3,7 +3,7 @@ import { FileService } from '../../services/file.service';
 import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
 import { SharedService } from '../../services/shared.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, map, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-folder-files',
@@ -12,7 +12,7 @@ import { Subject, takeUntil } from 'rxjs';
 })
 export class FolderFilesComponent implements OnInit, OnDestroy {
 
-  @Input() folderFiles$: FileClass[] = [];
+  @Input() folderFiles$: Observable<FileClass[]> = new Observable<FileClass[]>();
   txtModalDisplay: string = 'none';
   modalDisplay: string = 'none'
   txtFileContent: string = '';
@@ -21,16 +21,8 @@ export class FolderFilesComponent implements OnInit, OnDestroy {
   unsubscribeSignal: Subject<void> = new Subject();
 
   ngOnInit(): void {
-    this.folderService.findAllFilesByFolderId(this.currentFolderId)
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: FileClass[]) => {
-        this.folderFiles$ = res;
-        for (let i = 0; i < this.folderFiles$.length; i++) {
-          //Formatando o tamanho do arquivo.
-          const size: string = this.sharedService.formatBytes(this.folderFiles$[i].size as unknown as number);
-          this.folderFiles$[i].size = size;
-        }
-      })
+    this.folderFiles$ = this.folderService.findAllFilesByFolderId(this.currentFolderId)
+    this.formatFolderFileSize();
   }
 
   ngOnDestroy(): void {
@@ -77,10 +69,8 @@ export class FolderFilesComponent implements OnInit, OnDestroy {
   }
 
   findAllFilesByFolderId(folderId: string) {
-    this.folderService.findAllFilesByFolderId(folderId)
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: FileClass[]) =>
-        this.folderFiles$ = res)
+    this.folderFiles$ = this.folderService.findAllFilesByFolderId(folderId)
+    this.formatFolderFileSize()
   }
 
   closeTxtModal() {
@@ -97,5 +87,14 @@ export class FolderFilesComponent implements OnInit, OnDestroy {
 
   closeModal() {
     this.txtModalDisplay = 'none'
+  }
+
+  formatFolderFileSize() {
+    this.folderFiles$ = this.folderFiles$.pipe(
+      map(folderFiles => folderFiles.map(folderFiles => {
+        folderFiles.size = this.sharedService.formatBytes(folderFiles.size as unknown as number);
+        return folderFiles;
+      }))
+    );
   }
 }

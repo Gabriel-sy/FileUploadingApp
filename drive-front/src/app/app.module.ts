@@ -14,10 +14,12 @@ import { FolderComponent } from './components/folder/folder.component';
 import { FolderFilesComponent } from './components/folder-files/folder-files.component';
 import { AuthInterceptorService } from './services/auth-interceptor.service';
 import { ErrorInterceptorService } from './services/error-interceptor.service';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { LoadingComponent } from './components/loading/loading.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
   declarations: [
@@ -29,14 +31,16 @@ import { LoadingComponent } from './components/loading/loading.component';
     FileComponent,
     FolderComponent,
     FolderFilesComponent,
-    LoadingComponent,
+
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
-    ProgressSpinnerModule,
-    MatProgressSpinnerModule
+    ConfirmDialogModule,
+    ToastModule,
+    ConfirmPopupModule,
+    ProgressBarModule
   ],
   providers: [
     provideClientHydration(),
@@ -44,6 +48,8 @@ import { LoadingComponent } from './components/loading/loading.component';
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptorService, multi: true },
     { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptorService, multi: true },
     provideAnimationsAsync(),
+    MessageService,
+    ConfirmationService
   ],
   bootstrap: [AppComponent]
 })

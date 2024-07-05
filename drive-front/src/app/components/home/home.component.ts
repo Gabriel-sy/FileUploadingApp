@@ -3,10 +3,11 @@ import { FileService } from '../../services/file.service';
 import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
 import { FolderClass } from '../folder/Folder';
-import { Observable, Subject, combineLatest, forkJoin, map, takeUntil } from 'rxjs';
+import { Observable, Subject, map, takeUntil, throwError } from 'rxjs';
 import { SharedService } from '../../services/shared.service';
 import { AuthService } from '../../services/auth.service';
 import { isPlatformBrowser } from '@angular/common';
+import { PaginatorState } from 'primeng/paginator';
 
 @Component({
   selector: 'app-home',
@@ -15,16 +16,15 @@ import { isPlatformBrowser } from '@angular/common';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  // folders$: FolderClass[] = [];
   folders$: Observable<FolderClass[]> = new Observable<FolderClass[]>();
-  // files$: FileClass[] = [];
   files$: Observable<FileClass[]> = new Observable<FileClass[]>();
   folderFiles$: Observable<FileClass[]> = new Observable<FileClass[]>();
-  optionsModalDisplay = 'none';
-  lookingAtFolder: boolean = false;
-  folderDisplay: string = 'block'
-  currentFolderId: string = ''
   unsubscribeSignal: Subject<void> = new Subject();
+  lookingAtFolder: boolean = false;
+  currentFolderId: string = ''
+  optionsModalDisplay = 'none';
+  addButtonDisplay = 'flex';
+  folderDisplay: string = 'block'
   userLogin: string = '';
   userId: string = '';
   private readonly platformId = inject(PLATFORM_ID)
@@ -54,7 +54,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           .subscribe()
       }
     }
-
   }
 
   ngOnDestroy(): void {
@@ -65,6 +64,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   getFolderEvent(event: boolean) {
     this.lookingAtFolder = event;
     this.folderDisplay = 'none';
+    this.addButtonDisplay = 'none';
   }
 
   setFolderId(event: string) {
@@ -78,8 +78,9 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     this.fileService.saveFile(formData, this.userId)
       .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe()
-    this.findAllFiles();
+      .subscribe({
+        complete: () => { this.findAllFiles(); }
+      })
   }
 
   onFolderUpload(event: any) {
@@ -88,6 +89,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     if (event.target.files.length > 0) {
       let files = event.target.files;
+
       //Pegando nome da pasta
       var folderUrl: string = files[0].webkitRelativePath as string;
       var removeAfter = folderUrl.indexOf('/')
@@ -95,11 +97,14 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       this.folderService.saveFolder(folderName, this.userId)
         .pipe(takeUntil(this.unsubscribeSignal))
-        .subscribe((res: FolderClass) => {
-          folderId = res.id;
-          this.saveFilesWithFolderId(files, folderId)
+        .subscribe({
+          next: (res: FolderClass) => {
+            folderId = res.id;
+            this.saveFilesWithFolderId(files, folderId)
+          }
         })
     }
+
   }
 
   saveFilesWithFolderId(files: any, folderId: string) {
@@ -271,7 +276,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.lookingAtFolder = false;
     this.folderDisplay = 'block';
     this.currentFolderId = '';
+    this.addButtonDisplay = 'flex';
   }
+
+
 
   openFileModal() {
     if (this.optionsModalDisplay == 'flex') {
@@ -303,7 +311,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.folders$ = this.folders$.pipe(
       map(folders => folders.map(folder => {
         folder.size = this.sharedService.formatBytes(folder.size as unknown as number);
-        console.log(folder.size)
         return folder;
       }))
     );

@@ -16,8 +16,11 @@ public class Folder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, length = 75)
     private String name;
+    @Column(nullable = false)
     private String createdTime;
+    @Column(nullable = false)
     private int size;
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "user_id")

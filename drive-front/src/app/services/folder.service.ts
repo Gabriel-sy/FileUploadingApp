@@ -19,7 +19,7 @@ export class FolderService {
   }
 
   findAllFolders(userId: string) {
-    return this.http.get<FolderClass[]>('http://localhost:8080/folder/findall/' + userId).pipe(delay(500))
+    return this.http.get<FolderClass[]>('http://localhost:8080/folder/findall/' + userId)
   }
 
   findAllFilesByFolderId(id: string) {

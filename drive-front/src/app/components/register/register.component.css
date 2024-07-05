@@ -81,25 +81,3 @@ button {
 button:hover {
   background-color: #4b8c7b;
 }
-
-.modal-success {
-
-  margin: 0 auto;
-  background-color: rgb(252, 252, 252);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  border: none;
-  width: 310px;
-  height: 150px;
-  flex-direction: column;
-  justify-content: space-evenly;
-  text-align: center;
-  align-items: center;
-  position: absolute;
-  left: 0px;
-  right: 0px;
-}
-
-.modal-success button {
-  width: 50%;
-}

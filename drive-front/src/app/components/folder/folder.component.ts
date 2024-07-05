@@ -5,6 +5,7 @@ import { FolderService } from '../../services/folder.service';
 import { FolderClass } from './Folder';
 import { SharedService } from '../../services/shared.service';
 import { Observable, Subject, map, takeUntil } from 'rxjs';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-folder',
@@ -13,18 +14,18 @@ import { Observable, Subject, map, takeUntil } from 'rxjs';
 })
 export class FolderComponent implements OnInit, OnDestroy {
 
-  txtModalDisplay: string = 'none';
   modalDisplay: string = 'none'
-  txtFileContent: string = '';
-  txtFileTitle: string = '';
-  // @Input() folders$: FolderClass[] = [];
   @Input() folders$: Observable<FolderClass[]> = new Observable<FolderClass[]>();
   @Output() lookingAtFolder = new EventEmitter<boolean>()
   @Output() currentFolderId = new EventEmitter<string>()
   @Input() userId: string = ''
   unsubscribeSignal: Subject<void> = new Subject();
 
-  constructor(private fileService: FileService, private folderService: FolderService, private sharedService: SharedService) { }
+  constructor(private fileService: FileService, 
+    private folderService: FolderService, 
+    private sharedService: SharedService, 
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService) { }
 
   ngOnInit(): void {
     this.formatFolderSize()
@@ -35,35 +36,12 @@ export class FolderComponent implements OnInit, OnDestroy {
     this.unsubscribeSignal.unsubscribe()
   }
 
-  openFile(id: string, name: string) {
-    if (name.includes(".pdf")) {
-      this.sharedService.openPdf(id)
-    } else if (name.includes(".txt")) {
-      this.openTxt(id, name)
-    }
-  }
-
   downloadFile(id: string, name: string) {
     this.sharedService.downloadFile(id, name);
   }
 
-  openTxt(id: string, name: string) {
-    this.txtModalDisplay = 'flex'
-    this.fileService.getFileContent(id)
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: string) => {
-        this.txtFileContent = res;
-        this.txtFileTitle = name.replace(".txt", "");
-      })
-  }
-
   deleteFolder(folderId: string) {
-    this.folderService.deleteFolder(folderId)
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe({
-        next: () => this.deletefilesByFolderid(folderId)
-      })
-
+      this.deleteFolderConfirm(folderId)
   }
 
   deletefilesByFolderid(folderId: string) {
@@ -98,9 +76,6 @@ export class FolderComponent implements OnInit, OnDestroy {
       }))
     );
   }
-  closeTxtModal() {
-    this.txtModalDisplay = 'none';
-  }
 
   openModal(folder: FolderClass) {
     if (folder.isModalOpen) {
@@ -110,7 +85,35 @@ export class FolderComponent implements OnInit, OnDestroy {
     }
   }
 
-  closeModal() {
-    this.txtModalDisplay = 'none'
+  deleteFolderConfirm(folderId: string) {
+    this.confirmationService.confirm({
+      header: 'Remover',
+      message: "Tem certeza que quer remover?",
+      acceptLabel: "Remover",
+      rejectLabel: "Cancelar",
+      key: "delete",
+      acceptIcon: 'pi pi-check mr-2',
+      rejectIcon: 'pi pi-times mr-2',
+      rejectButtonStyleClass: 'p-button-sm',
+      acceptButtonStyleClass: 'p-button-outlined p-button-sm',
+      accept: () => {
+        this.deletefilesAndFolder(folderId)
+
+        this.messageService.add({ severity: 'info', summary: 'Removido com sucesso!', detail: 'Arquivo/pasta removidos com sucesso!', life: 3000 });
+        this.confirmationService.close();
+      },
+      reject: () => {
+        this.confirmationService.close();
+      }
+    });
   }
+
+  deletefilesAndFolder(folderId: string){
+    this.folderService.deleteFolder(folderId)
+      .pipe(takeUntil(this.unsubscribeSignal))
+      .subscribe({
+        next: () => this.deletefilesByFolderid(folderId)
+      })
+  }
+
 }

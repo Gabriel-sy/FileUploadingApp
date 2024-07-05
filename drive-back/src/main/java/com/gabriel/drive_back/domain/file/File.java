@@ -16,10 +16,14 @@ public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(nullable = false, length = 100)
     private String originalName;
+    @Column(nullable = false, length = 100)
     private String name;
     private Long size;
+    @Column(nullable = false, length = 100)
     private String createdDate;
+    @Column(nullable = false, length = 100)
     private String type;
     @Lob
     private byte[] fileBytes;

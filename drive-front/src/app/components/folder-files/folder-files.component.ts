@@ -4,6 +4,7 @@ import { FileClass } from '../file/File';
 import { FolderService } from '../../services/folder.service';
 import { SharedService } from '../../services/shared.service';
 import { Observable, Subject, map, takeUntil } from 'rxjs';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-folder-files',
@@ -12,11 +13,10 @@ import { Observable, Subject, map, takeUntil } from 'rxjs';
 })
 export class FolderFilesComponent implements OnInit, OnDestroy {
 
+  fileId: string = '';
+  fileName: string = '';
   @Input() folderFiles$: Observable<FileClass[]> = new Observable<FileClass[]>();
-  txtModalDisplay: string = 'none';
   modalDisplay: string = 'none'
-  txtFileContent: string = '';
-  txtFileTitle: string = '';
   @Input() currentFolderId: string = '';
   unsubscribeSignal: Subject<void> = new Subject();
 
@@ -32,17 +32,20 @@ export class FolderFilesComponent implements OnInit, OnDestroy {
 
   constructor(private folderService: FolderService,
     private fileService: FileService,
-    private sharedService: SharedService) { }
+    private sharedService: SharedService, private confirmationService: ConfirmationService,
+    private messageService: MessageService) { }
 
   stopPropagation(event: Event) {
     event.stopPropagation();
   }
 
   openFile(id: string, name: string) {
-    if (name.includes(".pdf")) {
-      this.sharedService.openPdf(id)
-    } else if (name.includes(".txt")) {
-      this.openTxt(id, name)
+    if (name.includes('pdf') || name.includes('txt')) {
+      this.sharedService.openPdfOrTxt(id)
+    } else {
+      this.fileId = id;
+      this.fileName = name
+      this.sharedService.openFileConfirm(this.fileId, this.fileName)
     }
   }
 
@@ -50,31 +53,13 @@ export class FolderFilesComponent implements OnInit, OnDestroy {
     this.sharedService.downloadFile(id, name);
   }
 
-  openTxt(id: string, name: string) {
-    this.txtModalDisplay = 'flex'
-    this.fileService.getFileContent(id)
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe((res: string) => {
-        this.txtFileContent = res;
-        this.txtFileTitle = name.replace(".txt", "");
-      })
-  }
-
   deleteFile(id: string, folderId: string) {
-    this.fileService.deleteFile(id)
-      .pipe(takeUntil(this.unsubscribeSignal))
-      .subscribe({
-        next: () => this.findAllFilesByFolderId(folderId)
-      })
+    this.deleteFileConfirm(id, folderId)
   }
 
   findAllFilesByFolderId(folderId: string) {
     this.folderFiles$ = this.folderService.findAllFilesByFolderId(folderId)
     this.formatFolderFileSize()
-  }
-
-  closeTxtModal() {
-    this.txtModalDisplay = 'none';
   }
 
   openModal(file: FileClass) {
@@ -85,9 +70,6 @@ export class FolderFilesComponent implements OnInit, OnDestroy {
     }
   }
 
-  closeModal() {
-    this.txtModalDisplay = 'none'
-  }
 
   formatFolderFileSize() {
     this.folderFiles$ = this.folderFiles$.pipe(
@@ -96,5 +78,38 @@ export class FolderFilesComponent implements OnInit, OnDestroy {
         return folderFiles;
       }))
     );
+  }
+
+  deleteFileConfirm(fileId: string, folderId: string) {
+    this.confirmationService.confirm({
+      header: 'Remover',
+      message: "Tem certeza que quer remover?",
+      acceptLabel: "Remover",
+      rejectLabel: "Cancelar",
+      key: "delete",
+      acceptIcon: 'pi pi-check mr-2',
+      rejectIcon: 'pi pi-times mr-2',
+      rejectButtonStyleClass: 'p-button-sm',
+      acceptButtonStyleClass: 'p-button-outlined p-button-sm',
+      accept: () => {
+        this.deleteFileFormatAndUpdate(fileId, folderId)
+
+        this.messageService.add({ severity: 'info', summary: 'Removido com sucesso!', detail: 'Arquivo/pasta removidos com sucesso!', life: 3000 });
+        this.confirmationService.close();
+      },
+      reject: () => {
+        this.confirmationService.close();
+      }
+    });
+  }
+
+  deleteFileFormatAndUpdate(fileId: string, folderId: string) {
+    this.fileService.deleteFile(fileId)
+      .pipe(takeUntil(this.unsubscribeSignal))
+      .subscribe({
+        complete: () => {
+          this.findAllFilesByFolderId(folderId);
+        }
+      });
   }
 }

@@ -24,22 +24,24 @@ export class FileService {
   }
 
   saveFile(formData: FormData, userId: string) {
-    return this.http.post('http://localhost:8080/file/upload/' + userId, formData, { observe: 'response' });
+    return this.http.post('http://localhost:8080/file/upload/' + userId, formData, {
+      observe: 'response'
+    });
   }
 
-  saveFolderFile(formData: FormData){
+  saveFolderFile(formData: FormData) {
     return this.http.post<FileClass>('http://localhost:8080/file/upload', formData);
   }
 
   getAllFiles(userId: string) {
-    return this.http.get<FileClass[]>('http://localhost:8080/file/get/all/' + userId).pipe(delay(500))
+    return this.http.get<FileClass[]>('http://localhost:8080/file/get/all/' + userId)
   }
 
-  saveFolderId(id: number, folderId: number){
+  saveFolderId(id: number, folderId: number) {
     let header = new HttpHeaders();
     header = header.set('Content-Type', 'application/json; charset=utf-8')
     var json = JSON.stringify({ id: id, folderId: folderId })
-    return this.http.post<FolderClass>('http://localhost:8080/file/save/folderid', json, {headers: header})
+    return this.http.post<FolderClass>('http://localhost:8080/file/save/folderid', json, { headers: header })
   }
 
   deleteFile(id: string) {

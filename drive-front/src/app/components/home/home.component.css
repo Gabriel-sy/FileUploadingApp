@@ -13,7 +13,7 @@
   background-color: white;
   min-width: 50%;
   max-width: 75%;
-  min-height: 400px;
+  min-height: 900px;
   margin: 0 auto;
   z-index: 10;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -53,7 +53,7 @@
   margin-top: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  z-index: 11;
+  z-index: 10;
   align-items: center;
   justify-content: center;
   align-content: center;
@@ -114,6 +114,17 @@ button:active {
     display: none;
   }
 
+  .nome,
+  .data,
+  .tamanho {
+    flex-direction: column;
+  }
+
+  .svg-div {
+    display: flex;
+    flex-direction: row;
+  }
+
   .add {
     width: 50px;
     margin-left: 0;
@@ -147,10 +158,4 @@ button:active {
   justify-content: center;
   align-items: center;
   flex: 1;
-}
-
-.loading {
-  display: flex;
-  margin: 0 auto;
-  margin-top: 25%;
 }

@@ -26,9 +26,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty
-    @Column(unique = true)
+    @Column(unique = true, length = 50)
     private String login;
     @NotEmpty
+    @Column(length = 100)
     private String password;
 //    @OneToMany(fetch = FetchType.EAGER, mappedBy = "userId", cascade = CascadeType.ALL)
 //    private Set<Folder> folders = new HashSet<>();

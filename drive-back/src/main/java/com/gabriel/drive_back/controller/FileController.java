@@ -4,7 +4,6 @@ import com.gabriel.drive_back.domain.file.File;
 import com.gabriel.drive_back.domain.file.FileDTO;
 import com.gabriel.drive_back.repository.FileRepository;
 import com.gabriel.drive_back.service.FileService;
-import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

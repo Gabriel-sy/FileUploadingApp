@@ -26,7 +26,7 @@ export class RegisterComponent {
       var values = this.registerData.value;
       if (values.login && values.password) {
         this.authService.register(values.login, values.password).subscribe();
-        this.modalDisplay = "flex";
+        this.redirect()
       }
     }
   }

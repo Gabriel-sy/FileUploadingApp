@@ -49,6 +49,7 @@ public class FileService {
     public List<File> findFileByFolderId(Long id){
         return fileRepository.findByFolderId(id).orElseThrow(() -> new FileNotFoundException("Nenhum arquivo corresponde a essa pasta"));
     }
+    
     public void saveFolderId(FileDTO fileDTO) {
         File fileFound = findFileById(fileDTO.id());
         fileFound.setFolderId(fileDTO.folderId());

@@ -1,11 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
-import { Jwt } from '../Jwt';
+import { AuthService } from '../../services/auth/auth.service';
 import { Router } from '@angular/router';
-import { catchError } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-
 
 @Component({
   selector: 'app-login',
@@ -31,9 +27,10 @@ export class LoginComponent {
       if (values.login && values.password) {
         this.authService.login(values.login, values.password)
           .subscribe({
-            next: (res) => {this.authService.setSession(res.jwt)
+            next: (res) => {
+              this.authService.setSession(res.jwt)
             },
-            error: () => {this.isCredentialsInvalid = true},
+            error: () => { this.isCredentialsInvalid = true },
             complete: () => this.router.navigateByUrl('home')
           }
           );

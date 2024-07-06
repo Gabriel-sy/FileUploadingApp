@@ -1,9 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Inject, Injectable, OnInit, PLATFORM_ID, inject } from '@angular/core';
-import { Jwt } from '../components/Jwt';
+import { Jwt } from '../../domain/Jwt';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
-import { User } from '../components/User';
+import { User } from '../../domain/User';
 
 @Injectable({
   providedIn: 'root'
@@ -71,10 +71,10 @@ export class AuthService {
     }
   }
 
-  findUserByToken(jwt: string){
+  findUserByToken(jwt: string) {
     let header = new HttpHeaders();
     header = header.set('Content-Type', 'application/json')
     var json = JSON.stringify({ jwt: jwt })
-    return this.http.post<User>('http://localhost:8080/auth/jwt', json, {headers: header});
+    return this.http.post<User>('http://localhost:8080/auth/jwt', json, { headers: header });
   }
 }

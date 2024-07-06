@@ -18,14 +18,15 @@ fazendo com que cada usuário tenha seu conjunto de pastas/arquivos no banco.
 
 ## Funcionalidades
 
-- **Upload de Arquivos/Pastas:** Cada usuário pode fazer o upload de arquivos e pastas, que são armazenados no banco de dados.
-- **Gerenciamento de Arquivos:** É possível baixar, abrir e navegar pelos arquivos que foram armazenados. 
+- **Upload de Arquivos/Pastas:** Cada usuário pode fazer o upload de arquivos e pastas, que são armazenados no banco de dados;
+- **Gerenciamento de Arquivos:** É possível baixar, abrir e navegar pelos arquivos que foram armazenados;
+- **Filtro de Arquivos/Pastas:** Também é possível fazer o filtro dos arquivos/pastas armazenados por nome, data e tamanho;
 - **Autenticação:** Sistema de autenticação com JWT, cada usuário tem acesso só aos seus arquivos e pastas.
 ## Requisitos
 
 - JDK 17
 - Node.js
-- Angular CLI
+- Angular
 - PostgreSQL
 - Docker
 

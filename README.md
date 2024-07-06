@@ -40,7 +40,6 @@ fazendo com que cada usuário tenha seu conjunto de pastas/arquivos no banco.
     ```properties
     POSTGRES_USER=usuario
     POSTGRES_PASSWORD=senha
-    POSTGRES_DATABASE=banco
     ```
 
 3. Inicie o Spring com docker:

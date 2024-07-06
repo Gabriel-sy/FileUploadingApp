@@ -1,8 +1,8 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, output } from '@angular/core';
-import { FileClass } from './File';
-import { FileService } from '../../services/file.service';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { FileClass } from '../../domain/File';
+import { FileService } from '../../services/upload/file.service';
 import { SharedService } from '../../services/shared.service';
-import { BehaviorSubject, Observable, Subject, Subscription, map, takeUntil, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, map, takeUntil } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 
@@ -66,10 +66,10 @@ export class FileComponent implements OnInit, OnDestroy {
       file.isModalOpen = false;
     } else {
       file.isModalOpen = true;
-    }    
+    }
   }
 
-  closeModal(file: FileClass){
+  closeModal(file: FileClass) {
     file.isModalOpen = false;
   }
 
@@ -105,7 +105,7 @@ export class FileComponent implements OnInit, OnDestroy {
     });
   }
 
-  
+
 
   deleteFileFormatAndUpdate(fileId: string) {
     this.fileService.deleteFile(fileId)

@@ -1,8 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
-import { FileService } from '../../services/file.service';
-import { FileClass } from '../file/File';
-import { FolderService } from '../../services/folder.service';
-import { FolderClass } from './Folder';
+import { FileService } from '../../services/upload/file.service';
+import { FolderService } from '../../services/upload/folder.service';
+import { FolderClass } from '../../domain/Folder';
 import { SharedService } from '../../services/shared.service';
 import { Observable, Subject, map, takeUntil } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';
@@ -21,9 +20,9 @@ export class FolderComponent implements OnInit, OnDestroy {
   @Input() userId: string = ''
   unsubscribeSignal: Subject<void> = new Subject();
 
-  constructor(private fileService: FileService, 
-    private folderService: FolderService, 
-    private sharedService: SharedService, 
+  constructor(private fileService: FileService,
+    private folderService: FolderService,
+    private sharedService: SharedService,
     private confirmationService: ConfirmationService,
     private messageService: MessageService) { }
 
@@ -41,7 +40,7 @@ export class FolderComponent implements OnInit, OnDestroy {
   }
 
   deleteFolder(folderId: string) {
-      this.deleteFolderConfirm(folderId)
+    this.deleteFolderConfirm(folderId)
   }
 
   deletefilesByFolderid(folderId: string) {
@@ -108,7 +107,7 @@ export class FolderComponent implements OnInit, OnDestroy {
     });
   }
 
-  deletefilesAndFolder(folderId: string){
+  deletefilesAndFolder(folderId: string) {
     this.folderService.deleteFolder(folderId)
       .pipe(takeUntil(this.unsubscribeSignal))
       .subscribe({

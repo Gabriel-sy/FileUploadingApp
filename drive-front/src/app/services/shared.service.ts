@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { FileService } from './file.service';
-import { FileClass } from '../components/file/File';
+import { FileService } from './upload/file.service';
+import { FileClass } from '../domain/File';
 import { Observable, Subscription, map } from 'rxjs';
-import { FolderService } from './folder.service';
-import { FolderClass } from '../components/folder/Folder';
+import { FolderService } from './upload/folder.service';
+import { FolderClass } from '../domain/Folder';
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Injectable({

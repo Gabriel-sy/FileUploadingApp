@@ -1,13 +1,12 @@
 import { Component, OnDestroy, OnInit, PLATFORM_ID, inject } from '@angular/core';
-import { FileService } from '../../services/file.service';
-import { FileClass } from '../file/File';
-import { FolderService } from '../../services/folder.service';
-import { FolderClass } from '../folder/Folder';
-import { Observable, Subject, map, takeUntil, throwError } from 'rxjs';
+import { FileService } from '../../services/upload/file.service';
+import { FileClass } from '../../domain/File';
+import { FolderService } from '../../services/upload/folder.service';
+import { FolderClass } from '../../domain/Folder';
+import { Observable, Subject, map, takeUntil } from 'rxjs';
 import { SharedService } from '../../services/shared.service';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 import { isPlatformBrowser } from '@angular/common';
-import { PaginatorState } from 'primeng/paginator';
 
 @Component({
   selector: 'app-home',
@@ -278,8 +277,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.currentFolderId = '';
     this.addButtonDisplay = 'flex';
   }
-
-
 
   openFileModal() {
     if (this.optionsModalDisplay == 'flex') {

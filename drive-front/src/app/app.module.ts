@@ -12,14 +12,13 @@ import { FileComponent } from './components/file/file.component';
 import { HTTP_INTERCEPTORS, provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
 import { FolderComponent } from './components/folder/folder.component';
 import { FolderFilesComponent } from './components/folder-files/folder-files.component';
-import { AuthInterceptorService } from './services/auth-interceptor.service';
-import { ErrorInterceptorService } from './services/error-interceptor.service';
+import { AuthInterceptorService } from './services/interceptors/auth-interceptor.service';
+import { ErrorInterceptorService } from './services/interceptors/error-interceptor.service';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ToastModule } from 'primeng/toast';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ConfirmPopupModule } from 'primeng/confirmpopup';
-import { ProgressBarModule } from 'primeng/progressbar';
 
 @NgModule({
   declarations: [
@@ -40,7 +39,6 @@ import { ProgressBarModule } from 'primeng/progressbar';
     ConfirmDialogModule,
     ToastModule,
     ConfirmPopupModule,
-    ProgressBarModule
   ],
   providers: [
     provideClientHydration(),

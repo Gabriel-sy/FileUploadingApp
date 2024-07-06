@@ -1,7 +1,7 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FileService } from '../../services/file.service';
-import { FileClass } from '../file/File';
-import { FolderService } from '../../services/folder.service';
+import { FileService } from '../../services/upload/file.service';
+import { FileClass } from '../../domain/File';
+import { FolderService } from '../../services/upload/folder.service';
 import { SharedService } from '../../services/shared.service';
 import { Observable, Subject, map, takeUntil } from 'rxjs';
 import { ConfirmationService, MessageService } from 'primeng/api';

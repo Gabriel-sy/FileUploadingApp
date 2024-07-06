@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, ElementRef, Renderer2, ViewChild, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../services/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-register',
@@ -25,8 +25,10 @@ export class RegisterComponent {
     if (this.registerData.valid) {
       var values = this.registerData.value;
       if (values.login && values.password) {
-        this.authService.register(values.login, values.password).subscribe();
-        this.redirect()
+        this.authService.register(values.login, values.password).subscribe({
+          complete: () => this.redirect()
+        });
+
       }
     }
   }

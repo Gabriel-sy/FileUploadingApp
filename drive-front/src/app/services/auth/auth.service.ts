@@ -10,6 +10,7 @@ import { User } from '../../domain/User';
 })
 export class AuthService {
 
+  private readonly API = 'http://localhost:8080/'
   private readonly platformId = inject(PLATFORM_ID)
 
   constructor(private http: HttpClient, private router: Router) {
@@ -19,14 +20,14 @@ export class AuthService {
     let header = new HttpHeaders();
     header = header.set('Content-Type', 'application/json; charset=utf-8')
     var json = JSON.stringify({ "login": login, "password": password })
-    return this.http.post('http://localhost:8080/auth/register', json, { headers: header });
+    return this.http.post(this.API + 'auth/register', json, { headers: header });
   }
 
   login(login: string, password: string) {
     let header = new HttpHeaders();
     header = header.set('Content-Type', 'application/json; charset=utf-8')
     var json = JSON.stringify({ "login": login, "password": password })
-    return this.http.post<Jwt>('http://localhost:8080/auth/login', json, { headers: header });
+    return this.http.post<Jwt>(this.API + 'auth/login', json, { headers: header });
   }
 
   setSession(jwt: string) {
@@ -75,6 +76,6 @@ export class AuthService {
     let header = new HttpHeaders();
     header = header.set('Content-Type', 'application/json')
     var json = JSON.stringify({ jwt: jwt })
-    return this.http.post<User>('http://localhost:8080/auth/jwt', json, { headers: header });
+    return this.http.post<User>(this.API + 'auth/jwt', json, { headers: header });
   }
 }

@@ -1,5 +1,5 @@
 # FileUploadingApp
-
+![Demo image](demoImage.png)
 FileUploadingApp é um aplicativo que permite o upload e 
 gerenciamento de arquivos e pastas. Os arquivos são salvos
 em um banco de dados PostgreSQL, 

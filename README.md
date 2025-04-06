@@ -1,12 +1,9 @@
 # FileUploadingApp
 ![Demo image](demoImage.png)
-FileUploadingApp é um aplicativo que permite o upload e 
-gerenciamento de arquivos e pastas. Os arquivos são salvos
-em um banco de dados PostgreSQL, 
-possuí um sistema de autenticação com JWT, 
-fazendo com que cada usuário tenha seu conjunto de pastas/arquivos no banco.
 
-## Tecnologias Utilizadas
+FileUploadingApp is an application that allows uploading and managing files and folders.
+
+## Technologies Used
 
 - Java
 - Typescript
@@ -16,13 +13,14 @@ fazendo com que cada usuário tenha seu conjunto de pastas/arquivos no banco.
 - PostgreSQL
 - Docker
 
-## Funcionalidades
+## Features
 
-- **Upload de Arquivos/Pastas:** Cada usuário pode fazer o upload de arquivos e pastas, que são armazenados no banco de dados;
-- **Gerenciamento de Arquivos:** É possível baixar, abrir e navegar pelos arquivos que foram armazenados;
-- **Filtro de Arquivos/Pastas:** Também é possível fazer o filtro dos arquivos/pastas armazenados por nome, data e tamanho;
-- **Autenticação:** Sistema de autenticação com JWT, cada usuário tem acesso só aos seus arquivos e pastas.
-## Requisitos
+- **File/Folder Upload:** Each user can upload files and folders;
+- **File Management:** It's possible to download, open, and browse the stored files;
+- **File/Folder Filtering:** It's also possible to filter stored files/folders by name, date, and size;
+- **Authentication:** JWT authentication system.
+
+## Requirements
 
 - JDK 17
 - Node.js
@@ -30,26 +28,27 @@ fazendo com que cada usuário tenha seu conjunto de pastas/arquivos no banco.
 - PostgreSQL
 - Docker
 
-## Instalação
+## Installation
 
-1. Clone o repositório:
+1.  Clone the repository:
     ```bash
-    https://github.com/Gabriel-sy/FileUploadingApp.gitloadingApp.git
+    git clone [https://github.com/Gabriel-sy/FileUploadingApp.git](https://www.google.com/search?q=https://github.com/Gabriel-sy/FileUploadingApp.git)
     ```
+    *(Note: Assuming the correct URL is `.../FileUploadingApp.git` based on the original)*
 
-2. Configure as variáveis de ambiente em `.env`:
+2.  Configure the environment variables in `.env` (inside the `drive-back` directory):
     ```properties
-    POSTGRES_USER=usuario
-    POSTGRES_PASSWORD=senha
+    POSTGRES_USER=your_username
+    POSTGRES_PASSWORD=your_password
     ```
 
-3. Inicie o Spring com docker:
+3.  Start Spring with Docker:
     ```bash
     cd FileUploadingApp
     cd drive-back
     docker-compose up
     ```
-4) Instale as dependencias do Angular e inicie o front:
+4.  Install Angular dependencies and start the frontend:
     ```bash
     cd ..
     cd drive-front
@@ -57,10 +56,8 @@ fazendo com que cada usuário tenha seu conjunto de pastas/arquivos no banco.
     npm run start
     ```
 
-## Uso
+## Usage
 
-- Acesse localhost:4200/register, para fazer o registro;
-- localhost:4200/login, para fazer o login após o registro;
-- localhost:4200/home após fazer o login.
-
-
+- Access `localhost:4200/register` to register;
+- Access `localhost:4200/login` to log in after registration;
+- Access `localhost:4200/home` after logging in.
